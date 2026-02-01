@@ -1,8 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ImageUploader from './components/ImageUploader';
 import ImagePreview from './components/ImagePreview';
 import TimestampEditor from './components/TimestampEditor';
+import LanguageSwitcher from './components/LanguageSwitcher';
 import useExifData from './hooks/useExifData';
 import { formatDate } from './utils/dateFormatter';
 import { calculateFontSize } from './utils/imageProcessor';
@@ -16,12 +17,19 @@ const DEFAULT_CONFIG: TimestampConfig = {
 };
 
 function App() {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const [file, setFile] = useState<File | null>(null);
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
 	const [config, setConfig] = useState<TimestampConfig>(DEFAULT_CONFIG);
 
 	const { date, loading } = useExifData(file);
+
+	useEffect(() => {
+		const preferredLanguage = localStorage.getItem('preferredLanguage');
+		if (preferredLanguage && preferredLanguage !== i18n.language) {
+			i18n.changeLanguage(preferredLanguage);
+		}
+	}, [i18n]);
 
 	const timestamp = useMemo(() => {
 		if (!date) return null;
@@ -47,26 +55,32 @@ function App() {
 	return (
 		<div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 py-6 sm:py-8 px-4">
 			<div className="max-w-5xl mx-auto">
-				<header className="text-center mb-6 sm:mb-8">
-					<h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center justify-center gap-2">
-						<svg
-							className="w-7 h-7 sm:w-8 sm:h-8 text-orange-500"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={2}
-								d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-							/>
-						</svg>
-						{t('app.title')}
-					</h1>
-					<p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
-						{t('app.subtitle')}
-					</p>
+				<header className="mb-6 sm:mb-8">
+					<div className="flex justify-between items-start mb-4">
+						<div />
+						<LanguageSwitcher />
+					</div>
+					<div className="text-center">
+						<h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center justify-center gap-2">
+							<svg
+								className="w-7 h-7 sm:w-8 sm:h-8 text-orange-500"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={2}
+									d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+								/>
+							</svg>
+							{t('app.title')}
+						</h1>
+						<p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+							{t('app.subtitle')}
+						</p>
+					</div>
 				</header>
 
 				<div className="space-y-6">
