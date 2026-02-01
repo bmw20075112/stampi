@@ -4,7 +4,16 @@ import { exportImage } from './imageExporter';
 // Mock compressorjs
 vi.mock('compressorjs', () => {
 	class CompressorMock {
-		constructor(_file: Blob, options: { success: (blob: Blob) => void }) {
+		constructor(
+			_file: Blob,
+			options: {
+				quality?: number;
+				maxWidth?: number;
+				maxHeight?: number;
+				success: (blob: Blob) => void;
+				error?: (err: Error) => void;
+			}
+		) {
 			// Simulate compression by calling success callback
 			setTimeout(() => {
 				options.success(new Blob(['compressed'], { type: 'image/jpeg' }));
