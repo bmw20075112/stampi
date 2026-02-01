@@ -15,7 +15,9 @@
 	"uploader": {
 		"title": "上傳照片",
 		"dragText": "點擊或拖放圖片到這裡",
-		"supportedFormats": "支援 JPEG、PNG、HEIC 格式"
+		"dragTextBatch": "點擊或拖放多張圖片到這裡",
+		"supportedFormats": "支援 JPEG、PNG、HEIC 格式",
+		"filesSelected": "已選擇 {count} 個檔案"
 	},
 	"preview": {
 		"downloadButton": "下載圖片",
@@ -37,6 +39,25 @@
 		"dashFormat": "YYYY-MM-DD",
 		"ddSlashMmSlashYyyy": "DD/MM/YYYY",
 		"mmSlashDdSlashYyyy": "MM/DD/YYYY"
+	},
+	"batch": {
+		"title": "處理佇列",
+		"progress": "已完成 {completed}/{total}",
+		"progressPercent": "{percent}%",
+		"statusPending": "待處理",
+		"statusProcessing": "處理中",
+		"statusCompleted": "已完成",
+		"statusError": "錯誤",
+		"remove": "移除",
+		"clearAll": "清除全部"
+	},
+	"download": {
+		"downloadAll": "全部下載為 ZIP",
+		"downloadZipCount": "全部下載為 ZIP（{count} 個檔案）",
+		"downloadZipSingle": "全部下載為 ZIP（1 個檔案）",
+		"downloadIndividual": "或個別下載：",
+		"preparingZip": "準備 ZIP 檔案中...",
+		"zipReady": "ZIP 已就緒！"
 	},
 	"dateInput": {
 		"title": "需要手動輸入日期",

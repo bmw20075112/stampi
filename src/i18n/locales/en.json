@@ -15,7 +15,9 @@
 	"uploader": {
 		"title": "Upload Photo",
 		"dragText": "Click or drag image here",
-		"supportedFormats": "Supported JPEG, PNG, HEIC formats"
+		"dragTextBatch": "Click or drag multiple images here",
+		"supportedFormats": "Supported JPEG, PNG, HEIC formats",
+		"filesSelected": "{count} files selected"
 	},
 	"preview": {
 		"downloadButton": "Download Image",
@@ -37,6 +39,25 @@
 		"dashFormat": "YYYY-MM-DD",
 		"ddSlashMmSlashYyyy": "DD/MM/YYYY",
 		"mmSlashDdSlashYyyy": "MM/DD/YYYY"
+	},
+	"batch": {
+		"title": "Processing Queue",
+		"progress": "{completed} of {total} completed",
+		"progressPercent": "{percent}%",
+		"statusPending": "Pending",
+		"statusProcessing": "Processing",
+		"statusCompleted": "Completed",
+		"statusError": "Error",
+		"remove": "Remove",
+		"clearAll": "Clear All"
+	},
+	"download": {
+		"downloadAll": "Download All as ZIP",
+		"downloadZipCount": "Download All as ZIP ({count} files)",
+		"downloadZipSingle": "Download All as ZIP (1 file)",
+		"downloadIndividual": "Or download individually:",
+		"preparingZip": "Preparing ZIP file...",
+		"zipReady": "ZIP ready!"
 	},
 	"dateInput": {
 		"title": "Manual Date Input Required",
