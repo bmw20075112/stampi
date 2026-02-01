@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { DragEvent, ChangeEvent } from 'react';
 
 interface ImageUploaderProps {
@@ -6,6 +7,7 @@ interface ImageUploaderProps {
 }
 
 export default function ImageUploader({ onImageSelect }: ImageUploaderProps) {
+	const { t } = useTranslation();
 	const [isDragging, setIsDragging] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -72,13 +74,13 @@ export default function ImageUploader({ onImageSelect }: ImageUploaderProps) {
 				/>
 			</svg>
 			<p className="text-gray-600 dark:text-gray-300 mb-1 font-medium">
-				上傳照片
+				{t('uploader.title')}
 			</p>
 			<p className="text-sm text-gray-400 dark:text-gray-500">
-				點擊或拖放圖片到這裡
+				{t('uploader.dragText')}
 			</p>
 			<p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-				支援 JPEG、PNG、HEIC 格式
+				{t('uploader.supportedFormats')}
 			</p>
 			<input
 				ref={fileInputRef}

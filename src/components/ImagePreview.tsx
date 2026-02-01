@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { renderTimestamp } from '../utils/imageProcessor';
 import type { TimestampConfig } from '../utils/imageProcessor';
 
@@ -13,6 +14,7 @@ export default function ImagePreview({
 	timestamp,
 	config,
 }: ImagePreviewProps) {
+	const { t } = useTranslation();
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const imageRef = useRef<HTMLImageElement | null>(null);
 
@@ -56,10 +58,10 @@ export default function ImagePreview({
 					/>
 				</svg>
 				<p className="text-amber-700 dark:text-amber-300 text-center font-medium">
-					無法讀取拍攝時間
+					{t('preview.noExifTitle')}
 				</p>
 				<p className="text-sm text-amber-600 dark:text-amber-400 text-center mt-1">
-					此圖片可能沒有 EXIF 資料
+					{t('preview.noExifMessage')}
 				</p>
 			</div>
 		);
@@ -91,7 +93,7 @@ export default function ImagePreview({
 						d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
 					/>
 				</svg>
-				下載圖片
+				{t('preview.downloadButton')}
 			</button>
 		</div>
 	);

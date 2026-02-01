@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import ImageUploader from './components/ImageUploader';
 import ImagePreview from './components/ImagePreview';
 import TimestampEditor from './components/TimestampEditor';
@@ -15,6 +16,7 @@ const DEFAULT_CONFIG: TimestampConfig = {
 };
 
 function App() {
+	const { t } = useTranslation();
 	const [file, setFile] = useState<File | null>(null);
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
 	const [config, setConfig] = useState<TimestampConfig>(DEFAULT_CONFIG);
@@ -60,10 +62,10 @@ function App() {
 								d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
 							/>
 						</svg>
-						Time Image
+						{t('app.title')}
 					</h1>
 					<p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
-						上傳照片，自動讀取 EXIF 並加上時間碼水印
+						{t('app.subtitle')}
 					</p>
 				</header>
 
@@ -92,7 +94,7 @@ function App() {
 								/>
 							</svg>
 							<p className="text-gray-600 dark:text-gray-400">
-								讀取 EXIF 資料中...
+								{t('editor.loading')}
 							</p>
 						</div>
 					)}
@@ -114,7 +116,7 @@ function App() {
 				</div>
 
 				<footer className="mt-12 text-center text-sm text-gray-500 dark:text-gray-600">
-					<p>純前端處理，照片不會上傳至伺服器</p>
+					<p>{t('app.privateNotice')}</p>
 				</footer>
 			</div>
 		</div>

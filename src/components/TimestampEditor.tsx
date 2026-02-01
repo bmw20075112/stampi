@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { TimestampConfig, Position } from '../utils/imageProcessor';
 import type { DateFormat } from '../utils/dateFormatter';
 
@@ -6,24 +7,25 @@ interface TimestampEditorProps {
 	onChange: (config: TimestampConfig) => void;
 }
 
-const formatOptions: { value: DateFormat; label: string }[] = [
-	{ value: 'YYYY/MM/DD', label: 'YYYY/MM/DD' },
-	{ value: 'YYYY-MM-DD', label: 'YYYY-MM-DD' },
-	{ value: 'DD/MM/YYYY', label: 'DD/MM/YYYY' },
-	{ value: 'MM/DD/YYYY', label: 'MM/DD/YYYY' },
-];
-
-const positionOptions: { value: Position; label: string }[] = [
-	{ value: 'bottom-right', label: '右下' },
-	{ value: 'bottom-left', label: '左下' },
-	{ value: 'top-right', label: '右上' },
-	{ value: 'top-left', label: '左上' },
-];
-
 export default function TimestampEditor({
 	config,
 	onChange,
 }: TimestampEditorProps) {
+	const { t } = useTranslation();
+
+	const formatOptions: { value: DateFormat; label: string }[] = [
+		{ value: 'YYYY/MM/DD', label: t('formats.slashFormat') },
+		{ value: 'YYYY-MM-DD', label: t('formats.dashFormat') },
+		{ value: 'DD/MM/YYYY', label: t('formats.ddSlashMmSlashYyyy') },
+		{ value: 'MM/DD/YYYY', label: t('formats.mmSlashDdSlashYyyy') },
+	];
+
+	const positionOptions: { value: Position; label: string }[] = [
+		{ value: 'bottom-right', label: t('positions.bottomRight') },
+		{ value: 'bottom-left', label: t('positions.bottomLeft') },
+		{ value: 'top-right', label: t('positions.topRight') },
+		{ value: 'top-left', label: t('positions.topLeft') },
+	];
 	const handleFormatChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		onChange({ ...config, format: e.target.value as DateFormat });
 	};
@@ -43,7 +45,7 @@ export default function TimestampEditor({
 	return (
 		<div className="space-y-4 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
 			<h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-				時間碼設定
+				{t('editor.title')}
 			</h3>
 
 			<div>
@@ -51,7 +53,7 @@ export default function TimestampEditor({
 					htmlFor="format"
 					className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
 				>
-					格式
+					{t('common.format')}
 				</label>
 				<select
 					id="format"
@@ -72,7 +74,7 @@ export default function TimestampEditor({
 					htmlFor="position"
 					className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
 				>
-					位置
+					{t('common.position')}
 				</label>
 				<select
 					id="position"
@@ -93,7 +95,7 @@ export default function TimestampEditor({
 					htmlFor="fontSize"
 					className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
 				>
-					字體大小
+					{t('common.fontSize')}
 				</label>
 				<div className="flex items-center gap-3">
 					<input
@@ -116,7 +118,7 @@ export default function TimestampEditor({
 					htmlFor="color"
 					className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
 				>
-					顏色
+					{t('common.color')}
 				</label>
 				<div className="flex items-center gap-3">
 					<input
