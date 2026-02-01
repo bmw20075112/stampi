@@ -27,20 +27,6 @@ describe('ImagePreview', () => {
 		expect(screen.getByTestId('preview-canvas')).toBeInTheDocument();
 	});
 
-	it('should render download button', () => {
-		render(
-			<ImagePreview
-				imageUrl="test.jpg"
-				timestamp="2024/03/15"
-				config={defaultConfig}
-			/>
-		);
-
-		expect(
-			screen.getByRole('button', { name: /Download/i })
-		).toBeInTheDocument();
-	});
-
 	it('should render canvas with appropriate styles', () => {
 		render(
 			<ImagePreview

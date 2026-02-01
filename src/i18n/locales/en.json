@@ -20,7 +20,6 @@
 		"filesSelected": "{count} files selected"
 	},
 	"preview": {
-		"downloadButton": "Download Image",
 		"noExifTitle": "Unable to read capture time",
 		"noExifMessage": "This image may not have EXIF data"
 	},

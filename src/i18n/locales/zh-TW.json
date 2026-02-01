@@ -20,7 +20,6 @@
 		"filesSelected": "已選擇 {count} 個檔案"
 	},
 	"preview": {
-		"downloadButton": "下載圖片",
 		"noExifTitle": "無法讀取拍攝時間",
 		"noExifMessage": "此圖片可能沒有 EXIF 資料"
 	},
