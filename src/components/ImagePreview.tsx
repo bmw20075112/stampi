@@ -113,7 +113,7 @@ export default function ImagePreview({
 					<canvas
 						ref={canvasRef}
 						data-testid="preview-canvas"
-						className="w-full h-full"
+						className="w-full h-full object-contain"
 					/>
 				</div>
 			</div>

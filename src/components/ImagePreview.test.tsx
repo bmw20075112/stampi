@@ -53,6 +53,7 @@ describe('ImagePreview', () => {
 		const canvas = screen.getByTestId('preview-canvas');
 		expect(canvas).toHaveClass('w-full');
 		expect(canvas).toHaveClass('h-full');
+		expect(canvas).toHaveClass('object-contain');
 	});
 
 	it('should display timestamp in preview', () => {
