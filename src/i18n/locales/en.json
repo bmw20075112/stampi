@@ -8,7 +8,7 @@
 		"color": "Color"
 	},
 	"app": {
-		"title": "Time Image",
+		"title": "Stampi",
 		"subtitle": "Upload photos to add EXIF timestamp watermark",
 		"privateNotice": "All processing happens locally on your device. No data is collected, stored, or transmitted to any server."
 	},

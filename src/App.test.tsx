@@ -28,7 +28,7 @@ describe('App', () => {
 	it('should render app title', () => {
 		render(<App />);
 
-		expect(screen.getByText(/Time Image/i)).toBeInTheDocument();
+		expect(screen.getByText(/Stampi/i)).toBeInTheDocument();
 	});
 
 	it('should show preview and editor after uploading image with EXIF', async () => {
