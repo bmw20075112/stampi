@@ -18,7 +18,7 @@ describe('BatchProgressView', () => {
 			color: '#FF6B35',
 			fontSize: 48,
 		},
-		dateSource: 'exif',
+		dateSource: 'exif-datetime-original',
 		confidence: 'high',
 		status: 'pending',
 		...overrides,

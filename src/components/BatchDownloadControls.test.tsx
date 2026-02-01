@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import BatchDownloadControls from './BatchDownloadControls';
@@ -31,7 +31,7 @@ describe('BatchDownloadControls', () => {
 			color: '#FF6B35',
 			fontSize: 48,
 		},
-		dateSource: 'exif',
+		dateSource: 'exif-datetime-original',
 		confidence: 'high',
 		status: 'completed',
 		canvas: document.createElement('canvas'),

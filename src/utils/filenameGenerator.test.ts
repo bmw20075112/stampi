@@ -30,7 +30,7 @@ describe('filenameGenerator', () => {
 			const result = await generateFilename(
 				file,
 				'2024/03/15 14:30:45',
-				'exif'
+				'exif-datetime-original'
 			);
 			expect(result).toBe('IMG_2024_03_15_14_30_45');
 		});
@@ -46,7 +46,7 @@ describe('filenameGenerator', () => {
 			const result = await generateFilename(
 				file,
 				'2024/03/15 14:30:45',
-				'exif'
+				'exif-datetime-original'
 			);
 			expect(result).not.toContain('/');
 			expect(result).not.toContain(':');
@@ -138,7 +138,11 @@ describe('filenameGenerator', () => {
 
 		it('should prioritize original filename over date when available', async () => {
 			const file = new File([''], 'my_photo.jpg', { type: 'image/jpeg' });
-			const result = await generateFilename(file, '2024/03/15', 'exif');
+			const result = await generateFilename(
+				file,
+				'2024/03/15',
+				'exif-datetime-original'
+			);
 			expect(result).toBe('my_photo_timestamped');
 		});
 	});

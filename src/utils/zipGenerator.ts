@@ -53,7 +53,7 @@ export async function createZip(
 
 	// Convert to Blob
 	onProgress?.(100);
-	return new Blob([zipped], { type: 'application/zip' });
+	return new Blob([new Uint8Array(zipped)], { type: 'application/zip' });
 }
 
 /**

@@ -28,7 +28,10 @@ export async function generateFilename(
 	}
 
 	// 2-3. Try date-based naming for EXIF or filename sources
-	if (timestamp && (dateSource === 'exif' || dateSource === 'filename')) {
+	if (
+		timestamp &&
+		(dateSource.startsWith('exif-') || dateSource === 'filename')
+	) {
 		const sanitizedDate = sanitizeDateString(timestamp);
 		return `IMG_${sanitizedDate}`;
 	}

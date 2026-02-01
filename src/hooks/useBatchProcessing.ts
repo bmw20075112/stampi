@@ -151,7 +151,7 @@ export function useBatchProcessing(options: BatchProcessingOptions = {}) {
 
 				// Render timestamp if available
 				if (image.timestamp) {
-					renderTimestamp(canvas, image.config, image.timestamp);
+					renderTimestamp(canvas, img, image.timestamp, image.config);
 				}
 
 				// Update image with canvas

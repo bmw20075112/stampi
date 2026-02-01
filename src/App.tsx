@@ -5,7 +5,10 @@ import ImagePreview from './components/ImagePreview';
 import TimestampEditor from './components/TimestampEditor';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import DateInputDialog from './components/DateInputDialog';
+import BatchProgressView from './components/BatchProgressView';
+import BatchDownloadControls from './components/BatchDownloadControls';
 import useTimestamp from './hooks/useTimestamp';
+import { useBatchProcessing } from './hooks/useBatchProcessing';
 import { formatDate } from './utils/dateFormatter';
 import { calculateFontSize } from './utils/imageProcessor';
 import type { TimestampConfig } from './utils/imageProcessor';
@@ -19,11 +22,19 @@ const DEFAULT_CONFIG: TimestampConfig = {
 
 function App() {
 	const { t, i18n } = useTranslation();
-	const [file, setFile] = useState<File | null>(null);
-	const [imageUrl, setImageUrl] = useState<string | null>(null);
 	const [config, setConfig] = useState<TimestampConfig>(DEFAULT_CONFIG);
 	const [showDateInputDialog, setShowDateInputDialog] = useState(false);
 	const [manualDate, setManualDate] = useState<Date | null>(null);
+
+	// Batch processing state
+	const { images, addImages, removeImage } = useBatchProcessing({
+		concurrentLimit: 2,
+	});
+
+	// Get the first image for preview (backward compatibility with single-file mode)
+	const firstImage = images.length > 0 ? images[0] : null;
+	const file = firstImage?.file || null;
+	const imageUrl = firstImage?.imageUrl || null;
 
 	const {
 		date: extractedDate,
@@ -59,25 +70,21 @@ function App() {
 	const handleImageSelect = (selectedFiles: File[]) => {
 		if (selectedFiles.length === 0) return;
 
-		// For now, use the first file (single-file mode)
-		// Phase 6 will integrate full batch processing
-		const selectedFile = selectedFiles[0];
+		// Add files to batch
+		addImages(selectedFiles);
 
-		if (imageUrl) {
-			URL.revokeObjectURL(imageUrl);
-		}
-		setFile(selectedFile);
-		setImageUrl(URL.createObjectURL(selectedFile));
+		// Reset manual date and dialog when new images uploaded
 		setManualDate(null);
 		setShowDateInputDialog(false);
 
-		// Calculate default font size based on image
+		// Calculate default font size based on first image
+		const firstFile = selectedFiles[0];
 		const img = new Image();
 		img.onload = () => {
 			const fontSize = calculateFontSize(img.naturalWidth);
 			setConfig((prev) => ({ ...prev, fontSize }));
 		};
-		img.src = URL.createObjectURL(selectedFile);
+		img.src = URL.createObjectURL(firstFile);
 	};
 
 	const handleDateInputConfirm = (confirmedDate: Date) => {
@@ -127,6 +134,12 @@ function App() {
 				<div className="space-y-6">
 					<ImageUploader onImageSelect={handleImageSelect} />
 
+					{/* Batch Progress View */}
+					{images.length > 0 && (
+						<BatchProgressView images={images} onRemove={removeImage} />
+					)}
+
+					{/* Single Image Preview (show first image) */}
 					{loading && (
 						<div className="flex items-center justify-center gap-3 py-8">
 							<svg
@@ -172,6 +185,9 @@ function App() {
 							</div>
 						</div>
 					)}
+
+					{/* Batch Download Controls */}
+					{images.length > 0 && <BatchDownloadControls images={images} />}
 				</div>
 
 				<footer className="mt-12 text-center text-sm text-gray-500 dark:text-gray-600">
