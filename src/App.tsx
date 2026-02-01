@@ -18,10 +18,10 @@ const DEFAULT_CONFIG: TimestampConfig = {
 	position: 'bottom-right',
 	color: '#FFF',
 	fontSize: 30,
-	shadowBlur: 4,
-	shadowOffsetX: 2,
-	shadowOffsetY: 2,
-	shadowColor: 'rgba(0, 0, 0, 0.7)',
+	shadowBlur: 8,
+	shadowOffsetX: 3,
+	shadowOffsetY: 3,
+	shadowColor: 'rgba(0, 0, 0, 0.9)',
 };
 
 function App() {

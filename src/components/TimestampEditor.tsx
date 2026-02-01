@@ -56,10 +56,10 @@ export default function TimestampEditor({
 		if (e.target.checked) {
 			onChange({
 				...config,
-				shadowBlur: 4,
-				shadowOffsetX: 2,
-				shadowOffsetY: 2,
-				shadowColor: 'rgba(0, 0, 0, 0.7)',
+				shadowBlur: 8,
+				shadowOffsetX: 3,
+				shadowOffsetY: 3,
+				shadowColor: 'rgba(0, 0, 0, 0.9)',
 			});
 		} else {
 			onChange({
