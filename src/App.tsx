@@ -1,46 +1,46 @@
-import { useState, useMemo } from 'react'
-import ImageUploader from './components/ImageUploader'
-import ImagePreview from './components/ImagePreview'
-import TimestampEditor from './components/TimestampEditor'
-import useExifData from './hooks/useExifData'
-import { formatDate } from './utils/dateFormatter'
-import { calculateFontSize } from './utils/imageProcessor'
-import type { TimestampConfig } from './utils/imageProcessor'
+import { useState, useMemo } from 'react';
+import ImageUploader from './components/ImageUploader';
+import ImagePreview from './components/ImagePreview';
+import TimestampEditor from './components/TimestampEditor';
+import useExifData from './hooks/useExifData';
+import { formatDate } from './utils/dateFormatter';
+import { calculateFontSize } from './utils/imageProcessor';
+import type { TimestampConfig } from './utils/imageProcessor';
 
 const DEFAULT_CONFIG: TimestampConfig = {
   format: 'YYYY/MM/DD',
   position: 'bottom-right',
   color: '#FF6B35',
   fontSize: 30,
-}
+};
 
 function App() {
-  const [file, setFile] = useState<File | null>(null)
-  const [imageUrl, setImageUrl] = useState<string | null>(null)
-  const [config, setConfig] = useState<TimestampConfig>(DEFAULT_CONFIG)
+  const [file, setFile] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [config, setConfig] = useState<TimestampConfig>(DEFAULT_CONFIG);
 
-  const { date, loading } = useExifData(file)
+  const { date, loading } = useExifData(file);
 
   const timestamp = useMemo(() => {
-    if (!date) return null
-    return formatDate(date, config.format)
-  }, [date, config.format])
+    if (!date) return null;
+    return formatDate(date, config.format);
+  }, [date, config.format]);
 
   const handleImageSelect = (selectedFile: File) => {
     if (imageUrl) {
-      URL.revokeObjectURL(imageUrl)
+      URL.revokeObjectURL(imageUrl);
     }
-    setFile(selectedFile)
-    setImageUrl(URL.createObjectURL(selectedFile))
+    setFile(selectedFile);
+    setImageUrl(URL.createObjectURL(selectedFile));
 
     // Calculate default font size based on image
-    const img = new Image()
+    const img = new Image();
     img.onload = () => {
-      const fontSize = calculateFontSize(img.naturalWidth)
-      setConfig((prev) => ({ ...prev, fontSize }))
-    }
-    img.src = URL.createObjectURL(selectedFile)
-  }
+      const fontSize = calculateFontSize(img.naturalWidth);
+      setConfig((prev) => ({ ...prev, fontSize }));
+    };
+    img.src = URL.createObjectURL(selectedFile);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 py-6 sm:py-8 px-4">
@@ -72,11 +72,7 @@ function App() {
 
           {loading && (
             <div className="flex items-center justify-center gap-3 py-8">
-              <svg
-                className="animate-spin w-5 h-5 text-blue-500"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
+              <svg className="animate-spin w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24">
                 <circle
                   className="opacity-25"
                   cx="12"
@@ -98,11 +94,7 @@ function App() {
           {imageUrl && !loading && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 order-2 lg:order-1">
-                <ImagePreview
-                  imageUrl={imageUrl}
-                  timestamp={timestamp}
-                  config={config}
-                />
+                <ImagePreview imageUrl={imageUrl} timestamp={timestamp} config={config} />
               </div>
               <div className="order-1 lg:order-2">
                 <TimestampEditor config={config} onChange={setConfig} />
@@ -116,7 +108,7 @@ function App() {
         </footer>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

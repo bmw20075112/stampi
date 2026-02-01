@@ -1,39 +1,39 @@
-import { useEffect, useRef } from 'react'
-import { renderTimestamp } from '../utils/imageProcessor'
-import type { TimestampConfig } from '../utils/imageProcessor'
+import { useEffect, useRef } from 'react';
+import { renderTimestamp } from '../utils/imageProcessor';
+import type { TimestampConfig } from '../utils/imageProcessor';
 
 interface ImagePreviewProps {
-  imageUrl: string
-  timestamp: string | null
-  config: TimestampConfig
+  imageUrl: string;
+  timestamp: string | null;
+  config: TimestampConfig;
 }
 
 export default function ImagePreview({ imageUrl, timestamp, config }: ImagePreviewProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const imageRef = useRef<HTMLImageElement | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imageRef = useRef<HTMLImageElement | null>(null);
 
   useEffect(() => {
-    if (!timestamp) return
+    if (!timestamp) return;
 
-    const image = new Image()
-    image.crossOrigin = 'anonymous'
+    const image = new Image();
+    image.crossOrigin = 'anonymous';
     image.onload = () => {
-      imageRef.current = image
+      imageRef.current = image;
       if (canvasRef.current) {
-        renderTimestamp(canvasRef.current, image, timestamp, config)
+        renderTimestamp(canvasRef.current, image, timestamp, config);
       }
-    }
-    image.src = imageUrl
-  }, [imageUrl, timestamp, config])
+    };
+    image.src = imageUrl;
+  }, [imageUrl, timestamp, config]);
 
   const handleDownload = () => {
-    if (!canvasRef.current) return
+    if (!canvasRef.current) return;
 
-    const link = document.createElement('a')
-    link.download = 'time-image.jpg'
-    link.href = canvasRef.current.toDataURL('image/jpeg', 0.95)
-    link.click()
-  }
+    const link = document.createElement('a');
+    link.download = 'time-image.jpg';
+    link.href = canvasRef.current.toDataURL('image/jpeg', 0.95);
+    link.click();
+  };
 
   if (!timestamp) {
     return (
@@ -58,7 +58,7 @@ export default function ImagePreview({ imageUrl, timestamp, config }: ImagePrevi
           此圖片可能沒有 EXIF 資料
         </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -74,12 +74,7 @@ export default function ImagePreview({ imageUrl, timestamp, config }: ImagePrevi
         onClick={handleDownload}
         className="w-full sm:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium rounded-xl transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2"
       >
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -90,5 +85,5 @@ export default function ImagePreview({ imageUrl, timestamp, config }: ImagePrevi
         下載圖片
       </button>
     </div>
-  )
+  );
 }

@@ -1,44 +1,44 @@
-import { useRef, useState } from 'react'
-import type { DragEvent, ChangeEvent } from 'react'
+import { useRef, useState } from 'react';
+import type { DragEvent, ChangeEvent } from 'react';
 
 interface ImageUploaderProps {
-  onImageSelect: (file: File) => void
+  onImageSelect: (file: File) => void;
 }
 
 export default function ImageUploader({ onImageSelect }: ImageUploaderProps) {
-  const [isDragging, setIsDragging] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = () => {
-    fileInputRef.current?.click()
-  }
+    fileInputRef.current?.click();
+  };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
-      onImageSelect(file)
+      onImageSelect(file);
     }
-  }
+  };
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    setIsDragging(true)
-  }
+    e.preventDefault();
+    setIsDragging(true);
+  };
 
   const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    setIsDragging(false)
-  }
+    e.preventDefault();
+    setIsDragging(false);
+  };
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    setIsDragging(false)
+    e.preventDefault();
+    setIsDragging(false);
 
-    const file = e.dataTransfer.files[0]
+    const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
-      onImageSelect(file)
+      onImageSelect(file);
     }
-  }
+  };
 
   return (
     <div
@@ -51,9 +51,11 @@ export default function ImageUploader({ onImageSelect }: ImageUploaderProps) {
         flex flex-col items-center justify-center
         w-full h-48 sm:h-64 border-2 border-dashed rounded-xl
         cursor-pointer transition-all duration-200
-        ${isDragging
-          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 scale-[1.02]'
-          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 bg-white dark:bg-gray-800'}
+        ${
+          isDragging
+            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 scale-[1.02]'
+            : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 bg-white dark:bg-gray-800'
+        }
       `}
     >
       <svg
@@ -81,5 +83,5 @@ export default function ImageUploader({ onImageSelect }: ImageUploaderProps) {
         className="hidden"
       />
     </div>
-  )
+  );
 }
