@@ -107,7 +107,7 @@ export default function BatchDownloadControls({
 					disabled={completedImages.length === 0 || downloadingZip}
 					className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-medium
             hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed
-            transition-colors flex items-center justify-center gap-2"
+            transition-colors flex items-center justify-center gap-2 cursor-pointer"
 				>
 					{downloadingZip ? (
 						<>
@@ -171,7 +171,7 @@ export default function BatchDownloadControls({
 								disabled={downloadingIds.has(image.id)}
 								className="flex items-center justify-between px-4 py-2 border border-gray-300 dark:border-gray-600
                   rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50
-                  disabled:cursor-not-allowed transition-colors text-left"
+                  disabled:cursor-not-allowed transition-colors text-left cursor-pointer"
 							>
 								<span className="text-sm text-gray-900 dark:text-gray-100 truncate flex-1">
 									{image.file.name}
