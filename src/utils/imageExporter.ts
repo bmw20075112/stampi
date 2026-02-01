@@ -1,15 +1,15 @@
 export interface ExportOptions {
 	quality?: number;
 	format?: 'jpeg' | 'webp';
-	enableCompression?: boolean;
 }
 
 /**
  * Exports a canvas to an optimized image blob
+ * Uses native browser compression with high quality settings
  *
  * @param canvas - The canvas element to export
  * @param options - Export options
- * @returns Promise resolving to image blob
+ * @returns Promise resolving to compressed image blob
  */
 export async function exportImage(
 	canvas: HTMLCanvasElement,
@@ -22,12 +22,13 @@ export async function exportImage(
 		throw new Error('Invalid canvas dimensions');
 	}
 
-	// For now, use native toBlob (Squoosh will be added in browser context later)
+	// Use native canvas compression
 	return canvasToBlob(canvas, format, quality);
 }
 
 /**
- * Converts canvas to blob using native browser API
+ * Converts canvas to blob using native browser API with quality control
+ * Quality parameter (0-1) controls compression level
  */
 function canvasToBlob(
 	canvas: HTMLCanvasElement,
@@ -46,7 +47,7 @@ function canvasToBlob(
 				resolve(blob);
 			},
 			mimeType,
-			quality
+			quality // canvas.toBlob expects 0-1 for quality parameter
 		);
 	});
 }

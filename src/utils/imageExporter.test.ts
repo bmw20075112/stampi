@@ -258,7 +258,7 @@ describe('imageExporter', () => {
 			});
 			canvas.toBlob = toBlobMock;
 
-			const blob = await exportImage(canvas, { enableCompression: true });
+			const blob = await exportImage(canvas, { quality: 0.85 });
 
 			expect(blob).toBeInstanceOf(Blob);
 		});

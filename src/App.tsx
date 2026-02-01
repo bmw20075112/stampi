@@ -27,9 +27,10 @@ function App() {
 	const [manualDate, setManualDate] = useState<Date | null>(null);
 
 	// Batch processing state
-	const { images, addImages, removeImage } = useBatchProcessing({
-		concurrentLimit: 2,
-	});
+	const { images, addImages, removeImage, startProcessing } =
+		useBatchProcessing({
+			concurrentLimit: 2,
+		});
 
 	// Get the first image for preview (backward compatibility with single-file mode)
 	const firstImage = images.length > 0 ? images[0] : null;
@@ -53,6 +54,14 @@ function App() {
 
 	// Use manual date if provided, otherwise use extracted date
 	const date = manualDate || extractedDate;
+
+	// Auto-start batch processing when new images are added
+	useEffect(() => {
+		const hasPendingImages = images.some((img) => img.status === 'pending');
+		if (hasPendingImages) {
+			startProcessing();
+		}
+	}, [images, startProcessing]);
 
 	// Show dialog if automatic methods failed and user hasn't provided input
 	useEffect(() => {
