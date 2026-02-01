@@ -57,7 +57,7 @@
 	},
 	"download": {
 		"downloadAll": "Download All as ZIP",
-		"downloadZipCount": "Download All as ZIP ({count} files)",
+		"downloadZipCount": "Download All as ZIP ({{count}} files)",
 		"downloadZipSingle": "Download All as ZIP (1 file)",
 		"downloadIndividual": "Or download individually:",
 		"preparingZip": "Preparing ZIP file...",

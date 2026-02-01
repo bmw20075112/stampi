@@ -57,7 +57,7 @@
 	},
 	"download": {
 		"downloadAll": "全部下載為 ZIP",
-		"downloadZipCount": "全部下載為 ZIP（{count} 個檔案）",
+		"downloadZipCount": "全部下載為 ZIP（{{count}} 個檔案）",
 		"downloadZipSingle": "全部下載為 ZIP（1 個檔案）",
 		"downloadIndividual": "或個別下載：",
 		"preparingZip": "準備 ZIP 檔案中...",
