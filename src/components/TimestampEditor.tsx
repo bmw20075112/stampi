@@ -175,7 +175,7 @@ export default function TimestampEditor({
 					htmlFor="shadow"
 					className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer"
 				>
-					Text Shadow
+					{t('editor.textShadow')}
 				</label>
 			</div>
 		</div>

@@ -25,7 +25,8 @@
 	},
 	"editor": {
 		"title": "時間碼設定",
-		"loading": "讀取 EXIF 資料中..."
+		"loading": "讀取 EXIF 資料中...",
+		"textShadow": "文字陰影"
 	},
 	"positions": {
 		"bottomRight": "右下",

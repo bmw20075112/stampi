@@ -25,7 +25,8 @@
 	},
 	"editor": {
 		"title": "Timestamp Settings",
-		"loading": "Reading EXIF data..."
+		"loading": "Reading EXIF data...",
+		"textShadow": "Text Shadow"
 	},
 	"positions": {
 		"bottomRight": "Bottom Right",
