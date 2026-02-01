@@ -4,7 +4,8 @@ import ImagePreview from './components/ImagePreview'
 import TimestampEditor from './components/TimestampEditor'
 import useExifData from './hooks/useExifData'
 import { formatDate } from './utils/dateFormatter'
-import { TimestampConfig, calculateFontSize } from './utils/imageProcessor'
+import { calculateFontSize } from './utils/imageProcessor'
+import type { TimestampConfig } from './utils/imageProcessor'
 
 const DEFAULT_CONFIG: TimestampConfig = {
   format: 'YYYY/MM/DD',

@@ -1,5 +1,5 @@
-import { TimestampConfig, Position } from '../utils/imageProcessor'
-import { DateFormat } from '../utils/dateFormatter'
+import type { TimestampConfig, Position } from '../utils/imageProcessor'
+import type { DateFormat } from '../utils/dateFormatter'
 
 interface TimestampEditorProps {
   config: TimestampConfig

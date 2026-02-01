@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
-import { TimestampConfig, renderTimestamp } from '../utils/imageProcessor'
+import { renderTimestamp } from '../utils/imageProcessor'
+import type { TimestampConfig } from '../utils/imageProcessor'
 
 interface ImagePreviewProps {
   imageUrl: string

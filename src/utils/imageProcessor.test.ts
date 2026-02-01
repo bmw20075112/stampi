@@ -1,10 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import {
-  calculateFontSize,
-  calculatePosition,
-  Position,
-  TimestampConfig,
-} from './imageProcessor'
+import { calculateFontSize, calculatePosition } from './imageProcessor'
+import type { Position, TimestampConfig } from './imageProcessor'
 
 describe('calculateFontSize', () => {
   it('should return approximately 3% of image width', () => {
