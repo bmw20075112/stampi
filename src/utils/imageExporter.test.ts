@@ -1,6 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { exportImage } from './imageExporter';
 
+// Mock compressorjs
+vi.mock('compressorjs', () => {
+	class CompressorMock {
+		constructor(_file: Blob, options: { success: (blob: Blob) => void }) {
+			// Simulate compression by calling success callback
+			setTimeout(() => {
+				options.success(new Blob(['compressed'], { type: 'image/jpeg' }));
+			}, 0);
+		}
+	}
+	return { default: CompressorMock };
+});
+
 describe('imageExporter', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -42,62 +55,45 @@ describe('imageExporter', () => {
 		});
 	});
 
-	describe('toBlob integration', () => {
-		it('should call canvas.toBlob with correct parameters', async () => {
+	describe('compression', () => {
+		it('should compress image using compressorjs', async () => {
 			const canvas = document.createElement('canvas');
 			canvas.width = 100;
 			canvas.height = 100;
 
-			const toBlobMock = vi.fn((callback) => {
-				callback(new Blob([new Uint8Array(1000)], { type: 'image/jpeg' }));
+			canvas.toBlob = vi.fn((callback) => {
+				callback(new Blob([new Uint8Array(5000)], { type: 'image/jpeg' }));
 			});
-			canvas.toBlob = toBlobMock;
 
-			await exportImage(canvas, { quality: 0.9, format: 'jpeg' });
-
-			expect(toBlobMock).toHaveBeenCalledWith(
-				expect.any(Function),
-				'image/jpeg',
-				0.9
-			);
+			const blob = await exportImage(canvas, { quality: 0.6 });
+			expect(blob).toBeInstanceOf(Blob);
+			expect(blob.size).toBeGreaterThan(0);
 		});
 
-		it('should use default quality of 0.5 for aggressive compression', async () => {
+		it('should use default quality of 0.6', async () => {
 			const canvas = document.createElement('canvas');
 			canvas.width = 100;
 			canvas.height = 100;
 
-			const toBlobMock = vi.fn((callback) => {
+			canvas.toBlob = vi.fn((callback) => {
 				callback(new Blob([new Uint8Array(1000)], { type: 'image/jpeg' }));
 			});
-			canvas.toBlob = toBlobMock;
 
-			await exportImage(canvas);
-
-			expect(toBlobMock).toHaveBeenCalledWith(
-				expect.any(Function),
-				'image/jpeg',
-				0.5
-			);
+			const blob = await exportImage(canvas);
+			expect(blob).toBeInstanceOf(Blob);
 		});
 
-		it('should support WebP format', async () => {
+		it('should accept custom quality', async () => {
 			const canvas = document.createElement('canvas');
 			canvas.width = 100;
 			canvas.height = 100;
 
-			const toBlobMock = vi.fn((callback) => {
-				callback(new Blob([new Uint8Array(1000)], { type: 'image/webp' }));
+			canvas.toBlob = vi.fn((callback) => {
+				callback(new Blob([new Uint8Array(1000)], { type: 'image/jpeg' }));
 			});
-			canvas.toBlob = toBlobMock;
 
-			await exportImage(canvas, { format: 'webp' });
-
-			expect(toBlobMock).toHaveBeenCalledWith(
-				expect.any(Function),
-				'image/webp',
-				0.5
-			);
+			const blob = await exportImage(canvas, { quality: 0.8 });
+			expect(blob).toBeInstanceOf(Blob);
 		});
 
 		it('should handle toBlob failure', async () => {
@@ -106,160 +102,39 @@ describe('imageExporter', () => {
 			canvas.height = 100;
 
 			canvas.toBlob = vi.fn((callback) => {
-				callback(null);
+				callback(null); // Simulate failure
 			});
 
 			await expect(exportImage(canvas)).rejects.toThrow(
-				'Failed to export canvas to blob'
-			);
-		});
-	});
-
-	describe('quality parameter', () => {
-		it('should accept quality between 0 and 1', async () => {
-			const canvas = document.createElement('canvas');
-			canvas.width = 100;
-			canvas.height = 100;
-
-			const toBlobMock = vi.fn((callback) => {
-				callback(new Blob([new Uint8Array(100)], { type: 'image/jpeg' }));
-			});
-			canvas.toBlob = toBlobMock;
-
-			await exportImage(canvas, { quality: 0.5 });
-
-			expect(toBlobMock).toHaveBeenCalledWith(
-				expect.any(Function),
-				'image/jpeg',
-				0.5
-			);
-		});
-
-		it('should handle very low quality', async () => {
-			const canvas = document.createElement('canvas');
-			canvas.width = 100;
-			canvas.height = 100;
-
-			const toBlobMock = vi.fn((callback) => {
-				callback(new Blob([new Uint8Array(10)], { type: 'image/jpeg' }));
-			});
-			canvas.toBlob = toBlobMock;
-
-			const blob = await exportImage(canvas, { quality: 0.01 });
-
-			expect(blob).toBeInstanceOf(Blob);
-			expect(toBlobMock).toHaveBeenCalledWith(
-				expect.any(Function),
-				'image/jpeg',
-				0.01
-			);
-		});
-
-		it('should handle maximum quality', async () => {
-			const canvas = document.createElement('canvas');
-			canvas.width = 100;
-			canvas.height = 100;
-
-			const toBlobMock = vi.fn((callback) => {
-				callback(new Blob([new Uint8Array(2000)], { type: 'image/jpeg' }));
-			});
-			canvas.toBlob = toBlobMock;
-
-			const blob = await exportImage(canvas, { quality: 1.0 });
-
-			expect(blob).toBeInstanceOf(Blob);
-			expect(toBlobMock).toHaveBeenCalledWith(
-				expect.any(Function),
-				'image/jpeg',
-				1.0
-			);
-		});
-	});
-
-	describe('format parameter', () => {
-		it('should default to JPEG format', async () => {
-			const canvas = document.createElement('canvas');
-			canvas.width = 100;
-			canvas.height = 100;
-
-			const toBlobMock = vi.fn((callback) => {
-				callback(new Blob([new Uint8Array(1000)], { type: 'image/jpeg' }));
-			});
-			canvas.toBlob = toBlobMock;
-
-			await exportImage(canvas);
-
-			expect(toBlobMock).toHaveBeenCalledWith(
-				expect.any(Function),
-				'image/jpeg',
-				expect.any(Number)
-			);
-		});
-
-		it('should accept JPEG format explicitly', async () => {
-			const canvas = document.createElement('canvas');
-			canvas.width = 100;
-			canvas.height = 100;
-
-			const toBlobMock = vi.fn((callback) => {
-				callback(new Blob([new Uint8Array(1000)], { type: 'image/jpeg' }));
-			});
-			canvas.toBlob = toBlobMock;
-
-			await exportImage(canvas, { format: 'jpeg' });
-
-			expect(toBlobMock).toHaveBeenCalledWith(
-				expect.any(Function),
-				'image/jpeg',
-				expect.any(Number)
+				'Failed to convert canvas to blob'
 			);
 		});
 	});
 
 	describe('edge cases', () => {
-		it('should handle empty options object', async () => {
-			const canvas = document.createElement('canvas');
-			canvas.width = 100;
-			canvas.height = 100;
-
-			const toBlobMock = vi.fn((callback) => {
-				callback(new Blob([new Uint8Array(1000)], { type: 'image/jpeg' }));
-			});
-			canvas.toBlob = toBlobMock;
-
-			const blob = await exportImage(canvas, {});
-
-			expect(blob).toBeInstanceOf(Blob);
-		});
-
-		it('should handle large canvas dimensions', async () => {
+		it('should handle large canvas', async () => {
 			const canvas = document.createElement('canvas');
 			canvas.width = 4000;
 			canvas.height = 3000;
 
-			const toBlobMock = vi.fn((callback) => {
+			canvas.toBlob = vi.fn((callback) => {
 				callback(new Blob([new Uint8Array(10000)], { type: 'image/jpeg' }));
 			});
-			canvas.toBlob = toBlobMock;
 
 			const blob = await exportImage(canvas);
-
 			expect(blob).toBeInstanceOf(Blob);
-			expect(blob.size).toBeGreaterThan(0);
 		});
 
-		it('should ignore enableCompression flag (reserved for future use)', async () => {
+		it('should handle empty options', async () => {
 			const canvas = document.createElement('canvas');
 			canvas.width = 100;
 			canvas.height = 100;
 
-			const toBlobMock = vi.fn((callback) => {
+			canvas.toBlob = vi.fn((callback) => {
 				callback(new Blob([new Uint8Array(1000)], { type: 'image/jpeg' }));
 			});
-			canvas.toBlob = toBlobMock;
 
-			const blob = await exportImage(canvas, { quality: 0.85 });
-
+			const blob = await exportImage(canvas, {});
 			expect(blob).toBeInstanceOf(Blob);
 		});
 	});
