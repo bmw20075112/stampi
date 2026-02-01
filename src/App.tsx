@@ -27,10 +27,16 @@ function App() {
 	const [manualDate, setManualDate] = useState<Date | null>(null);
 
 	// Batch processing state
-	const { images, addImages, removeImage, startProcessing } =
-		useBatchProcessing({
-			concurrentLimit: 2,
-		});
+	const {
+		images,
+		addImages,
+		removeImage,
+		startProcessing,
+		updateTimestampForAll,
+		rerenderCompletedImages,
+	} = useBatchProcessing({
+		concurrentLimit: 2,
+	});
 
 	// Get the first image for preview (backward compatibility with single-file mode)
 	const firstImage = images.length > 0 ? images[0] : null;
@@ -54,6 +60,26 @@ function App() {
 
 	// Use manual date if provided, otherwise use extracted date
 	const date = manualDate || extractedDate;
+
+	// Apply timestamp to all images when date changes
+	useEffect(() => {
+		const formattedTimestamp = date ? formatDate(date, config.format) : null;
+		if (formattedTimestamp && images.length > 0) {
+			updateTimestampForAll(formattedTimestamp, source, confidence);
+			// Re-render completed images with updated timestamp
+			setTimeout(() => {
+				rerenderCompletedImages();
+			}, 0);
+		}
+	}, [
+		date,
+		config.format,
+		source,
+		confidence,
+		images.length,
+		updateTimestampForAll,
+		rerenderCompletedImages,
+	]);
 
 	// Auto-start batch processing when new images are added
 	useEffect(() => {
