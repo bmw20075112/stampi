@@ -29,6 +29,7 @@ Time Image is a pure client-side React app that adds timestamp watermarks to pho
 ### Key Types
 
 `TimestampConfig` (in `imageProcessor.ts`) is the central config object passed between components:
+
 - `format`: DateFormat type ('YYYY/MM/DD' | 'YYYY-MM-DD' | 'DD/MM/YYYY' | 'MM/DD/YYYY')
 - `position`: Position type ('bottom-right' | 'bottom-left' | 'top-right' | 'top-left')
 - `color`: hex string (default: '#FF6B35' orange-red)
@@ -37,6 +38,7 @@ Time Image is a pure client-side React app that adds timestamp watermarks to pho
 ### Canvas Rendering
 
 `renderTimestamp()` in `imageProcessor.ts` handles the actual watermark rendering:
+
 - Draws original image to canvas at full resolution
 - Uses monospace font for classic film camera aesthetic
 - Calculates position based on text metrics and padding
