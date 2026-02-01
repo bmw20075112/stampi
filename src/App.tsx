@@ -25,7 +25,13 @@ function App() {
 	const [showDateInputDialog, setShowDateInputDialog] = useState(false);
 	const [manualDate, setManualDate] = useState<Date | null>(null);
 
-	const { date: extractedDate, loading, source, confidence, needsUserInput } = useTimestamp(file);
+	const {
+		date: extractedDate,
+		loading,
+		source,
+		confidence,
+		needsUserInput,
+	} = useTimestamp(file);
 
 	useEffect(() => {
 		const preferredLanguage = localStorage.getItem('preferredLanguage');
@@ -40,6 +46,7 @@ function App() {
 	// Show dialog if automatic methods failed and user hasn't provided input
 	useEffect(() => {
 		if (needsUserInput && !manualDate && file) {
+			// eslint-disable-next-line react-hooks/set-state-in-effect
 			setShowDateInputDialog(true);
 		}
 	}, [needsUserInput, manualDate, file]);
@@ -49,7 +56,13 @@ function App() {
 		return formatDate(date, config.format);
 	}, [date, config.format]);
 
-	const handleImageSelect = (selectedFile: File) => {
+	const handleImageSelect = (selectedFiles: File[]) => {
+		if (selectedFiles.length === 0) return;
+
+		// For now, use the first file (single-file mode)
+		// Phase 6 will integrate full batch processing
+		const selectedFile = selectedFiles[0];
+
 		if (imageUrl) {
 			URL.revokeObjectURL(imageUrl);
 		}
