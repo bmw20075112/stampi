@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { DragEvent, ChangeEvent } from 'react';
 
 interface ImageUploaderProps {
-	onImageSelect: (file: File) => void;
+	onImageSelect: (files: File[]) => void;
 }
 
 export default function ImageUploader({ onImageSelect }: ImageUploaderProps) {
@@ -16,9 +16,15 @@ export default function ImageUploader({ onImageSelect }: ImageUploaderProps) {
 	};
 
 	const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
-		if (file) {
-			onImageSelect(file);
+		const files = e.target.files;
+		if (files && files.length > 0) {
+			// Convert FileList to Array and filter for images
+			const imageFiles = Array.from(files).filter((file) =>
+				file.type.startsWith('image/')
+			);
+			if (imageFiles.length > 0) {
+				onImageSelect(imageFiles);
+			}
 		}
 	};
 
@@ -36,9 +42,15 @@ export default function ImageUploader({ onImageSelect }: ImageUploaderProps) {
 		e.preventDefault();
 		setIsDragging(false);
 
-		const file = e.dataTransfer.files[0];
-		if (file && file.type.startsWith('image/')) {
-			onImageSelect(file);
+		const files = e.dataTransfer.files;
+		if (files && files.length > 0) {
+			// Convert FileList to Array and filter for images
+			const imageFiles = Array.from(files).filter((file) =>
+				file.type.startsWith('image/')
+			);
+			if (imageFiles.length > 0) {
+				onImageSelect(imageFiles);
+			}
 		}
 	};
 
@@ -87,6 +99,7 @@ export default function ImageUploader({ onImageSelect }: ImageUploaderProps) {
 				data-testid="file-input"
 				type="file"
 				accept="image/*"
+				multiple
 				onChange={handleFileChange}
 				className="hidden"
 			/>
