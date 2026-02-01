@@ -37,5 +37,22 @@
 		"dashFormat": "YYYY-MM-DD",
 		"ddSlashMmSlashYyyy": "DD/MM/YYYY",
 		"mmSlashDdSlashYyyy": "MM/DD/YYYY"
+	},
+	"dateInput": {
+		"title": "Manual Date Input Required",
+		"subtitle": "Unable to automatically detect capture date",
+		"filenameLabel": "Filename",
+		"dateLabel": "Date",
+		"timeLabel": "Time (optional)",
+		"confirmButton": "Confirm Date",
+		"skipButton": "Continue Without Date"
+	},
+	"dateSource": {
+		"exifDateTimeOriginal": "From camera EXIF",
+		"exifCreateDate": "From camera EXIF",
+		"exifModifyDate": "From file metadata",
+		"filename": "Extracted from filename",
+		"fileModified": "From file modification time",
+		"userInput": "Manually entered"
 	}
 }

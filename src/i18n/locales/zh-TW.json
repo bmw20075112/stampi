@@ -37,5 +37,22 @@
 		"dashFormat": "YYYY-MM-DD",
 		"ddSlashMmSlashYyyy": "DD/MM/YYYY",
 		"mmSlashDdSlashYyyy": "MM/DD/YYYY"
+	},
+	"dateInput": {
+		"title": "需要手動輸入日期",
+		"subtitle": "無法自動偵測拍攝日期",
+		"filenameLabel": "檔案名稱",
+		"dateLabel": "日期",
+		"timeLabel": "時間（選填）",
+		"confirmButton": "確認日期",
+		"skipButton": "略過日期"
+	},
+	"dateSource": {
+		"exifDateTimeOriginal": "來自相機 EXIF",
+		"exifCreateDate": "來自相機 EXIF",
+		"exifModifyDate": "來自檔案中繼資料",
+		"filename": "從檔名解析",
+		"fileModified": "來自檔案修改時間",
+		"userInput": "手動輸入"
 	}
 }

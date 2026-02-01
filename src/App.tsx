@@ -4,7 +4,8 @@ import ImageUploader from './components/ImageUploader';
 import ImagePreview from './components/ImagePreview';
 import TimestampEditor from './components/TimestampEditor';
 import LanguageSwitcher from './components/LanguageSwitcher';
-import useExifData from './hooks/useExifData';
+import DateInputDialog from './components/DateInputDialog';
+import useTimestamp from './hooks/useTimestamp';
 import { formatDate } from './utils/dateFormatter';
 import { calculateFontSize } from './utils/imageProcessor';
 import type { TimestampConfig } from './utils/imageProcessor';
@@ -21,8 +22,10 @@ function App() {
 	const [file, setFile] = useState<File | null>(null);
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
 	const [config, setConfig] = useState<TimestampConfig>(DEFAULT_CONFIG);
+	const [showDateInputDialog, setShowDateInputDialog] = useState(false);
+	const [manualDate, setManualDate] = useState<Date | null>(null);
 
-	const { date, loading } = useExifData(file);
+	const { date: extractedDate, loading, source, confidence, needsUserInput } = useTimestamp(file);
 
 	useEffect(() => {
 		const preferredLanguage = localStorage.getItem('preferredLanguage');
@@ -30,6 +33,16 @@ function App() {
 			i18n.changeLanguage(preferredLanguage);
 		}
 	}, [i18n]);
+
+	// Use manual date if provided, otherwise use extracted date
+	const date = manualDate || extractedDate;
+
+	// Show dialog if automatic methods failed and user hasn't provided input
+	useEffect(() => {
+		if (needsUserInput && !manualDate && file) {
+			setShowDateInputDialog(true);
+		}
+	}, [needsUserInput, manualDate, file]);
 
 	const timestamp = useMemo(() => {
 		if (!date) return null;
@@ -42,6 +55,8 @@ function App() {
 		}
 		setFile(selectedFile);
 		setImageUrl(URL.createObjectURL(selectedFile));
+		setManualDate(null);
+		setShowDateInputDialog(false);
 
 		// Calculate default font size based on image
 		const img = new Image();
@@ -50,6 +65,19 @@ function App() {
 			setConfig((prev) => ({ ...prev, fontSize }));
 		};
 		img.src = URL.createObjectURL(selectedFile);
+	};
+
+	const handleDateInputConfirm = (confirmedDate: Date) => {
+		setManualDate(confirmedDate);
+		setShowDateInputDialog(false);
+	};
+
+	const handleDateInputSkip = () => {
+		setShowDateInputDialog(false);
+	};
+
+	const handleEditDate = () => {
+		setShowDateInputDialog(true);
 	};
 
 	return (
@@ -120,6 +148,10 @@ function App() {
 									imageUrl={imageUrl}
 									timestamp={timestamp}
 									config={config}
+									dateSource={source}
+									dateConfidence={confidence}
+									onRequestDateInput={() => setShowDateInputDialog(true)}
+									onEditDate={handleEditDate}
 								/>
 							</div>
 							<div className="order-1 lg:order-2">
@@ -133,6 +165,14 @@ function App() {
 					<p>{t('app.privateNotice')}</p>
 				</footer>
 			</div>
+
+			<DateInputDialog
+				open={showDateInputDialog}
+				filename={file?.name || 'unknown'}
+				defaultDate={manualDate || extractedDate || undefined}
+				onConfirm={handleDateInputConfirm}
+				onSkip={handleDateInputSkip}
+			/>
 		</div>
 	);
 }

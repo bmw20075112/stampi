@@ -62,11 +62,14 @@ describe('App', () => {
 
 		await userEvent.upload(input, file);
 
-		await waitFor(() => {
-			expect(
-				screen.getByText(/Unable to read capture time/i)
-			).toBeInTheDocument();
-		});
+		// With no EXIF and no filename pattern, app uses file.lastModified
+		// So it should show the preview, not the warning
+		await waitFor(
+			() => {
+				expect(screen.getByTestId('preview-canvas')).toBeInTheDocument();
+			},
+			{ timeout: 3000 }
+		);
 	});
 
 	it('should update preview when editor config changes', async () => {

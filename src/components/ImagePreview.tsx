@@ -1,18 +1,28 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { renderTimestamp } from '../utils/imageProcessor';
+import DateSourceBadge from './DateSourceBadge';
 import type { TimestampConfig } from '../utils/imageProcessor';
+import type { DateSource, Confidence } from '../hooks/useTimestamp';
 
 interface ImagePreviewProps {
 	imageUrl: string;
 	timestamp: string | null;
 	config: TimestampConfig;
+	dateSource?: DateSource;
+	dateConfidence?: Confidence;
+	onRequestDateInput?: () => void;
+	onEditDate?: () => void;
 }
 
 export default function ImagePreview({
 	imageUrl,
 	timestamp,
 	config,
+	dateSource,
+	dateConfidence,
+	onRequestDateInput,
+	onEditDate,
 }: ImagePreviewProps) {
 	const { t } = useTranslation();
 	const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -63,12 +73,29 @@ export default function ImagePreview({
 				<p className="text-sm text-amber-600 dark:text-amber-400 text-center mt-1">
 					{t('preview.noExifMessage')}
 				</p>
+				{onRequestDateInput && (
+					<button
+						onClick={onRequestDateInput}
+						className="mt-4 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium transition-colors text-sm"
+					>
+						{t('preview.inputDateButton') || 'Input Date Manually'}
+					</button>
+				)}
 			</div>
 		);
 	}
 
 	return (
 		<div className="flex flex-col items-center space-y-4">
+			{dateSource && dateConfidence && (
+				<div className="w-full flex justify-between items-center">
+					<DateSourceBadge
+						source={dateSource}
+						confidence={dateConfidence}
+						onEdit={onEditDate}
+					/>
+				</div>
+			)}
 			<div className="w-full bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-3 sm:p-4">
 				<canvas
 					ref={canvasRef}
