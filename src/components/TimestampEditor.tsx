@@ -42,6 +42,25 @@ export default function TimestampEditor({
 		onChange({ ...config, color: e.target.value });
 	};
 
+	const handleShadowToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.target.checked) {
+			onChange({
+				...config,
+				shadowBlur: 4,
+				shadowOffsetX: 2,
+				shadowOffsetY: 2,
+				shadowColor: 'rgba(0, 0, 0, 0.7)',
+			});
+		} else {
+			onChange({
+				...config,
+				shadowBlur: 0,
+				shadowOffsetX: 0,
+				shadowOffsetY: 0,
+			});
+		}
+	};
+
 	return (
 		<div className="space-y-4 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
 			<h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
@@ -132,6 +151,22 @@ export default function TimestampEditor({
 						{config.color}
 					</span>
 				</div>
+			</div>
+
+			<div className="flex items-center gap-3">
+				<input
+					id="shadow"
+					type="checkbox"
+					checked={(config.shadowBlur ?? 0) > 0}
+					onChange={handleShadowToggle}
+					className="w-4 h-4 cursor-pointer accent-blue-500"
+				/>
+				<label
+					htmlFor="shadow"
+					className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer"
+				>
+					Text Shadow
+				</label>
 			</div>
 		</div>
 	);
