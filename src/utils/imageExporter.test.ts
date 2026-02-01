@@ -62,7 +62,7 @@ describe('imageExporter', () => {
 			);
 		});
 
-		it('should use default quality of 0.85', async () => {
+		it('should use default quality of 0.75 for better compression', async () => {
 			const canvas = document.createElement('canvas');
 			canvas.width = 100;
 			canvas.height = 100;
@@ -77,7 +77,7 @@ describe('imageExporter', () => {
 			expect(toBlobMock).toHaveBeenCalledWith(
 				expect.any(Function),
 				'image/jpeg',
-				0.85
+				0.75
 			);
 		});
 
@@ -96,7 +96,7 @@ describe('imageExporter', () => {
 			expect(toBlobMock).toHaveBeenCalledWith(
 				expect.any(Function),
 				'image/webp',
-				0.85
+				0.75
 			);
 		});
 
