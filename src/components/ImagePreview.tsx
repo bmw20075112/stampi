@@ -108,12 +108,14 @@ export default function ImagePreview({
 					/>
 				</div>
 			)}
-			<div className="w-full bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-3 sm:p-4">
-				<canvas
-					ref={canvasRef}
-					data-testid="preview-canvas"
-					className="max-w-full h-auto rounded-lg mx-auto"
-				/>
+			<div className="w-full flex justify-center bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-3 sm:p-4">
+				<div className="w-full max-w-sm aspect-square overflow-hidden rounded-lg">
+					<canvas
+						ref={canvasRef}
+						data-testid="preview-canvas"
+						className="w-full h-full"
+					/>
+				</div>
 			</div>
 			<button
 				onClick={handleDownload}
