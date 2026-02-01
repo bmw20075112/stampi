@@ -154,7 +154,7 @@ export function useBatchProcessing(options: BatchProcessingOptions = {}) {
 							renderTimestamp(
 								newCanvas,
 								imageElement,
-								img.timestamp,
+								img.timestamp ?? '',
 								img.config
 							);
 							// Update the image with the new canvas
