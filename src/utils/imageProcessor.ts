@@ -11,6 +11,10 @@ export interface TimestampConfig {
 	position: Position;
 	color: string;
 	fontSize: number;
+	shadowBlur?: number;
+	shadowOffsetX?: number;
+	shadowOffsetY?: number;
+	shadowColor?: string;
 }
 
 export interface Size {
@@ -84,6 +88,14 @@ export function renderTimestamp(
 	ctx.font = `${fontSize}px monospace`;
 	ctx.fillStyle = config.color;
 
+	// Apply text shadow if configured
+	if (config.shadowBlur !== undefined && config.shadowBlur > 0) {
+		ctx.shadowColor = config.shadowColor || 'rgba(0, 0, 0, 0.5)';
+		ctx.shadowBlur = config.shadowBlur;
+		ctx.shadowOffsetX = config.shadowOffsetX ?? 2;
+		ctx.shadowOffsetY = config.shadowOffsetY ?? 2;
+	}
+
 	const textMetrics = ctx.measureText(timestamp);
 	const textHeight = fontSize;
 	const textWidth = textMetrics.width;
@@ -97,4 +109,8 @@ export function renderTimestamp(
 	);
 
 	ctx.fillText(timestamp, position.x, position.y);
+
+	// Reset shadow settings
+	ctx.shadowColor = 'transparent';
+	ctx.shadowBlur = 0;
 }

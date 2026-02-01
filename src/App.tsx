@@ -16,8 +16,12 @@ import type { TimestampConfig } from './utils/imageProcessor';
 const DEFAULT_CONFIG: TimestampConfig = {
 	format: 'YYYY/MM/DD',
 	position: 'bottom-right',
-	color: '#FF6B35',
+	color: '#FFF',
 	fontSize: 30,
+	shadowBlur: 4,
+	shadowOffsetX: 2,
+	shadowOffsetY: 2,
+	shadowColor: 'rgba(0, 0, 0, 0.7)',
 };
 
 function App() {
