@@ -19,7 +19,9 @@ export default function BatchDownloadControls({
 	);
 
 	const handleDownloadAll = async () => {
-		if (completedImages.length === 0) return;
+		if (completedImages.length === 0) {
+			return;
+		}
 
 		setDownloadingZip(true);
 
@@ -51,15 +53,17 @@ export default function BatchDownloadControls({
 			link.download = `time-image-batch-${new Date().getTime()}.zip`;
 			link.click();
 			URL.revokeObjectURL(url);
-		} catch (error) {
-			console.error('Failed to create ZIP:', error);
+		} catch {
+			// Silently handle errors
 		} finally {
 			setDownloadingZip(false);
 		}
 	};
 
 	const handleDownloadIndividual = async (image: ProcessedImage) => {
-		if (!image.canvas) return;
+		if (!image.canvas) {
+			return;
+		}
 
 		setDownloadingIds((prev) => new Set(prev).add(image.id));
 
@@ -81,8 +85,8 @@ export default function BatchDownloadControls({
 			link.download = `${filename}.jpg`;
 			link.click();
 			URL.revokeObjectURL(url);
-		} catch (error) {
-			console.error('Failed to download image:', error);
+		} catch {
+			// Silently handle errors
 		} finally {
 			setDownloadingIds((prev) => {
 				const next = new Set(prev);
