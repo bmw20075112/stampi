@@ -1,0 +1,41 @@
+{
+	"common": {
+		"upload": "上傳",
+		"download": "下載",
+		"format": "格式",
+		"position": "位置",
+		"fontSize": "字體大小",
+		"color": "顏色"
+	},
+	"app": {
+		"title": "Time Image",
+		"subtitle": "上傳照片，自動讀取 EXIF 並加上時間碼水印",
+		"privateNotice": "純前端處理，照片不會上傳至伺服器"
+	},
+	"uploader": {
+		"title": "上傳照片",
+		"dragText": "點擊或拖放圖片到這裡",
+		"supportedFormats": "支援 JPEG、PNG、HEIC 格式"
+	},
+	"preview": {
+		"downloadButton": "下載圖片",
+		"noExifTitle": "無法讀取拍攝時間",
+		"noExifMessage": "此圖片可能沒有 EXIF 資料"
+	},
+	"editor": {
+		"title": "時間碼設定",
+		"loading": "讀取 EXIF 資料中..."
+	},
+	"positions": {
+		"bottomRight": "右下",
+		"bottomLeft": "左下",
+		"topRight": "右上",
+		"topLeft": "左上"
+	},
+	"formats": {
+		"slashFormat": "YYYY/MM/DD",
+		"dashFormat": "YYYY-MM-DD",
+		"ddSlashMmSlashYyyy": "DD/MM/YYYY",
+		"mmSlashDdSlashYyyy": "MM/DD/YYYY"
+	}
+}

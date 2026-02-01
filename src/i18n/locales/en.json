@@ -1,0 +1,41 @@
+{
+	"common": {
+		"upload": "Upload",
+		"download": "Download",
+		"format": "Format",
+		"position": "Position",
+		"fontSize": "Font Size",
+		"color": "Color"
+	},
+	"app": {
+		"title": "Time Image",
+		"subtitle": "Upload photos to add EXIF timestamp watermark",
+		"privateNotice": "Pure client-side processing, photos won't be uploaded to server"
+	},
+	"uploader": {
+		"title": "Upload Photo",
+		"dragText": "Click or drag image here",
+		"supportedFormats": "Supported JPEG, PNG, HEIC formats"
+	},
+	"preview": {
+		"downloadButton": "Download Image",
+		"noExifTitle": "Unable to read capture time",
+		"noExifMessage": "This image may not have EXIF data"
+	},
+	"editor": {
+		"title": "Timestamp Settings",
+		"loading": "Reading EXIF data..."
+	},
+	"positions": {
+		"bottomRight": "Bottom Right",
+		"bottomLeft": "Bottom Left",
+		"topRight": "Top Right",
+		"topLeft": "Top Left"
+	},
+	"formats": {
+		"slashFormat": "YYYY/MM/DD",
+		"dashFormat": "YYYY-MM-DD",
+		"ddSlashMmSlashYyyy": "DD/MM/YYYY",
+		"mmSlashDdSlashYyyy": "MM/DD/YYYY"
+	}
+}
