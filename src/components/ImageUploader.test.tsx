@@ -6,7 +6,7 @@ import ImageUploader from './ImageUploader';
 describe('ImageUploader', () => {
 	it('should render upload area', () => {
 		render(<ImageUploader onImageSelect={vi.fn()} />);
-		expect(screen.getByText(/上傳照片/i)).toBeInTheDocument();
+		expect(screen.getByText(/Upload Photo/i)).toBeInTheDocument();
 	});
 
 	it('should render file input with accept attribute for images', () => {

@@ -14,24 +14,26 @@ describe('TimestampEditor', () => {
 	it('should render all configuration fields', () => {
 		render(<TimestampEditor config={defaultConfig} onChange={vi.fn()} />);
 
-		expect(screen.getByLabelText(/格式/i)).toBeInTheDocument();
-		expect(screen.getByLabelText(/位置/i)).toBeInTheDocument();
-		expect(screen.getByLabelText(/字體大小/i)).toBeInTheDocument();
-		expect(screen.getByLabelText(/顏色/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/format/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/position/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/font size/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/color/i)).toBeInTheDocument();
 	});
 
 	describe('format selector', () => {
 		it('should display current format value', () => {
 			render(<TimestampEditor config={defaultConfig} onChange={vi.fn()} />);
 
-			const formatSelect = screen.getByLabelText(/格式/i) as HTMLSelectElement;
+			const formatSelect = screen.getByLabelText(
+				/format/i
+			) as HTMLSelectElement;
 			expect(formatSelect.value).toBe('YYYY/MM/DD');
 		});
 
 		it('should have all format options', () => {
 			render(<TimestampEditor config={defaultConfig} onChange={vi.fn()} />);
 
-			const formatSelect = screen.getByLabelText(/格式/i);
+			const formatSelect = screen.getByLabelText(/format/i);
 			expect(formatSelect).toContainHTML('YYYY/MM/DD');
 			expect(formatSelect).toContainHTML('YYYY-MM-DD');
 			expect(formatSelect).toContainHTML('DD/MM/YYYY');
@@ -42,7 +44,7 @@ describe('TimestampEditor', () => {
 			const onChange = vi.fn();
 			render(<TimestampEditor config={defaultConfig} onChange={onChange} />);
 
-			const formatSelect = screen.getByLabelText(/格式/i);
+			const formatSelect = screen.getByLabelText(/format/i);
 			fireEvent.change(formatSelect, { target: { value: 'YYYY-MM-DD' } });
 
 			expect(onChange).toHaveBeenCalledWith({
@@ -57,7 +59,7 @@ describe('TimestampEditor', () => {
 			render(<TimestampEditor config={defaultConfig} onChange={vi.fn()} />);
 
 			const positionSelect = screen.getByLabelText(
-				/位置/i
+				/position/i
 			) as HTMLSelectElement;
 			expect(positionSelect.value).toBe('bottom-right');
 		});
@@ -65,18 +67,18 @@ describe('TimestampEditor', () => {
 		it('should have all position options', () => {
 			render(<TimestampEditor config={defaultConfig} onChange={vi.fn()} />);
 
-			const positionSelect = screen.getByLabelText(/位置/i);
-			expect(positionSelect).toContainHTML('右下');
-			expect(positionSelect).toContainHTML('左下');
-			expect(positionSelect).toContainHTML('右上');
-			expect(positionSelect).toContainHTML('左上');
+			const positionSelect = screen.getByLabelText(/position/i);
+			expect(positionSelect).toContainHTML('Bottom Right');
+			expect(positionSelect).toContainHTML('Bottom Left');
+			expect(positionSelect).toContainHTML('Top Right');
+			expect(positionSelect).toContainHTML('Top Left');
 		});
 
 		it('should call onChange when position is changed', () => {
 			const onChange = vi.fn();
 			render(<TimestampEditor config={defaultConfig} onChange={onChange} />);
 
-			const positionSelect = screen.getByLabelText(/位置/i);
+			const positionSelect = screen.getByLabelText(/position/i);
 			fireEvent.change(positionSelect, { target: { value: 'top-left' } });
 
 			expect(onChange).toHaveBeenCalledWith({
@@ -90,7 +92,7 @@ describe('TimestampEditor', () => {
 		it('should display current font size value', () => {
 			render(<TimestampEditor config={defaultConfig} onChange={vi.fn()} />);
 
-			const slider = screen.getByLabelText(/字體大小/i) as HTMLInputElement;
+			const slider = screen.getByLabelText(/font size/i) as HTMLInputElement;
 			expect(slider.value).toBe('30');
 		});
 
@@ -98,7 +100,7 @@ describe('TimestampEditor', () => {
 			const onChange = vi.fn();
 			render(<TimestampEditor config={defaultConfig} onChange={onChange} />);
 
-			const slider = screen.getByLabelText(/字體大小/i);
+			const slider = screen.getByLabelText(/font size/i);
 			fireEvent.change(slider, { target: { value: '50' } });
 
 			expect(onChange).toHaveBeenCalledWith({
@@ -112,7 +114,7 @@ describe('TimestampEditor', () => {
 		it('should display current color value', () => {
 			render(<TimestampEditor config={defaultConfig} onChange={vi.fn()} />);
 
-			const colorPicker = screen.getByLabelText(/顏色/i) as HTMLInputElement;
+			const colorPicker = screen.getByLabelText(/color/i) as HTMLInputElement;
 			expect(colorPicker.value).toBe('#ff6b35');
 		});
 
@@ -120,7 +122,7 @@ describe('TimestampEditor', () => {
 			const onChange = vi.fn();
 			render(<TimestampEditor config={defaultConfig} onChange={onChange} />);
 
-			const colorPicker = screen.getByLabelText(/顏色/i);
+			const colorPicker = screen.getByLabelText(/color/i);
 			fireEvent.change(colorPicker, { target: { value: '#00ff00' } });
 
 			expect(onChange).toHaveBeenCalledWith({

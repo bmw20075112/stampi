@@ -36,7 +36,9 @@ describe('ImagePreview', () => {
 			/>
 		);
 
-		expect(screen.getByRole('button', { name: /下載/i })).toBeInTheDocument();
+		expect(
+			screen.getByRole('button', { name: /Download/i })
+		).toBeInTheDocument();
 	});
 
 	it('should render canvas with appropriate styles', () => {
@@ -108,6 +110,8 @@ describe('ImagePreview', () => {
 			/>
 		);
 
-		expect(screen.getByText(/無法讀取拍攝時間/i)).toBeInTheDocument();
+		expect(
+			screen.getByText(/Unable to read capture time/i)
+		).toBeInTheDocument();
 	});
 });

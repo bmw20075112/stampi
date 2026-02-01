@@ -48,8 +48,8 @@ describe('App', () => {
 			expect(screen.getByTestId('preview-canvas')).toBeInTheDocument();
 		});
 
-		expect(screen.getByLabelText(/格式/i)).toBeInTheDocument();
-		expect(screen.getByLabelText(/位置/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/format/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/position/i)).toBeInTheDocument();
 	});
 
 	it('should show warning when image has no EXIF data', async () => {
@@ -63,7 +63,9 @@ describe('App', () => {
 		await userEvent.upload(input, file);
 
 		await waitFor(() => {
-			expect(screen.getByText(/無法讀取拍攝時間/i)).toBeInTheDocument();
+			expect(
+				screen.getByText(/Unable to read capture time/i)
+			).toBeInTheDocument();
 		});
 	});
 
@@ -84,7 +86,7 @@ describe('App', () => {
 			expect(screen.getByTestId('preview-canvas')).toBeInTheDocument();
 		});
 
-		const positionSelect = screen.getByLabelText(/位置/i);
+		const positionSelect = screen.getByLabelText(/position/i);
 		await userEvent.selectOptions(positionSelect, 'top-left');
 
 		// Verify the select value changed
