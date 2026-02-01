@@ -8,107 +8,117 @@ import { calculateFontSize } from './utils/imageProcessor';
 import type { TimestampConfig } from './utils/imageProcessor';
 
 const DEFAULT_CONFIG: TimestampConfig = {
-  format: 'YYYY/MM/DD',
-  position: 'bottom-right',
-  color: '#FF6B35',
-  fontSize: 30,
+	format: 'YYYY/MM/DD',
+	position: 'bottom-right',
+	color: '#FF6B35',
+	fontSize: 30,
 };
 
 function App() {
-  const [file, setFile] = useState<File | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [config, setConfig] = useState<TimestampConfig>(DEFAULT_CONFIG);
+	const [file, setFile] = useState<File | null>(null);
+	const [imageUrl, setImageUrl] = useState<string | null>(null);
+	const [config, setConfig] = useState<TimestampConfig>(DEFAULT_CONFIG);
 
-  const { date, loading } = useExifData(file);
+	const { date, loading } = useExifData(file);
 
-  const timestamp = useMemo(() => {
-    if (!date) return null;
-    return formatDate(date, config.format);
-  }, [date, config.format]);
+	const timestamp = useMemo(() => {
+		if (!date) return null;
+		return formatDate(date, config.format);
+	}, [date, config.format]);
 
-  const handleImageSelect = (selectedFile: File) => {
-    if (imageUrl) {
-      URL.revokeObjectURL(imageUrl);
-    }
-    setFile(selectedFile);
-    setImageUrl(URL.createObjectURL(selectedFile));
+	const handleImageSelect = (selectedFile: File) => {
+		if (imageUrl) {
+			URL.revokeObjectURL(imageUrl);
+		}
+		setFile(selectedFile);
+		setImageUrl(URL.createObjectURL(selectedFile));
 
-    // Calculate default font size based on image
-    const img = new Image();
-    img.onload = () => {
-      const fontSize = calculateFontSize(img.naturalWidth);
-      setConfig((prev) => ({ ...prev, fontSize }));
-    };
-    img.src = URL.createObjectURL(selectedFile);
-  };
+		// Calculate default font size based on image
+		const img = new Image();
+		img.onload = () => {
+			const fontSize = calculateFontSize(img.naturalWidth);
+			setConfig((prev) => ({ ...prev, fontSize }));
+		};
+		img.src = URL.createObjectURL(selectedFile);
+	};
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 py-6 sm:py-8 px-4">
-      <div className="max-w-5xl mx-auto">
-        <header className="text-center mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center justify-center gap-2">
-            <svg
-              className="w-7 h-7 sm:w-8 sm:h-8 text-orange-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            Time Image
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
-            上傳照片，自動讀取 EXIF 並加上時間碼水印
-          </p>
-        </header>
+	return (
+		<div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 py-6 sm:py-8 px-4">
+			<div className="max-w-5xl mx-auto">
+				<header className="text-center mb-6 sm:mb-8">
+					<h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center justify-center gap-2">
+						<svg
+							className="w-7 h-7 sm:w-8 sm:h-8 text-orange-500"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+							/>
+						</svg>
+						Time Image
+					</h1>
+					<p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+						上傳照片，自動讀取 EXIF 並加上時間碼水印
+					</p>
+				</header>
 
-        <div className="space-y-6">
-          <ImageUploader onImageSelect={handleImageSelect} />
+				<div className="space-y-6">
+					<ImageUploader onImageSelect={handleImageSelect} />
 
-          {loading && (
-            <div className="flex items-center justify-center gap-3 py-8">
-              <svg className="animate-spin w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24">
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
-              <p className="text-gray-600 dark:text-gray-400">讀取 EXIF 資料中...</p>
-            </div>
-          )}
+					{loading && (
+						<div className="flex items-center justify-center gap-3 py-8">
+							<svg
+								className="animate-spin w-5 h-5 text-blue-500"
+								fill="none"
+								viewBox="0 0 24 24"
+							>
+								<circle
+									className="opacity-25"
+									cx="12"
+									cy="12"
+									r="10"
+									stroke="currentColor"
+									strokeWidth="4"
+								/>
+								<path
+									className="opacity-75"
+									fill="currentColor"
+									d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+								/>
+							</svg>
+							<p className="text-gray-600 dark:text-gray-400">
+								讀取 EXIF 資料中...
+							</p>
+						</div>
+					)}
 
-          {imageUrl && !loading && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 order-2 lg:order-1">
-                <ImagePreview imageUrl={imageUrl} timestamp={timestamp} config={config} />
-              </div>
-              <div className="order-1 lg:order-2">
-                <TimestampEditor config={config} onChange={setConfig} />
-              </div>
-            </div>
-          )}
-        </div>
+					{imageUrl && !loading && (
+						<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+							<div className="lg:col-span-2 order-2 lg:order-1">
+								<ImagePreview
+									imageUrl={imageUrl}
+									timestamp={timestamp}
+									config={config}
+								/>
+							</div>
+							<div className="order-1 lg:order-2">
+								<TimestampEditor config={config} onChange={setConfig} />
+							</div>
+						</div>
+					)}
+				</div>
 
-        <footer className="mt-12 text-center text-sm text-gray-500 dark:text-gray-600">
-          <p>純前端處理，照片不會上傳至伺服器</p>
-        </footer>
-      </div>
-    </div>
-  );
+				<footer className="mt-12 text-center text-sm text-gray-500 dark:text-gray-600">
+					<p>純前端處理，照片不會上傳至伺服器</p>
+				</footer>
+			</div>
+		</div>
+	);
 }
 
 export default App;
