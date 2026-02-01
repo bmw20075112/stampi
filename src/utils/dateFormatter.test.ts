@@ -55,6 +55,38 @@ describe('formatDate', () => {
 		});
 	});
 
+	describe('format: YYYY/MM/DD HH:mm:ss', () => {
+		it('should format date with time as YYYY/MM/DD HH:mm:ss', () => {
+			expect(formatDate(testDate, 'YYYY/MM/DD HH:mm:ss')).toBe(
+				'2024/03/15 14:30:45'
+			);
+		});
+	});
+
+	describe('format: YYYY-MM-DD HH:mm:ss', () => {
+		it('should format date with time as YYYY-MM-DD HH:mm:ss', () => {
+			expect(formatDate(testDate, 'YYYY-MM-DD HH:mm:ss')).toBe(
+				'2024-03-15 14:30:45'
+			);
+		});
+	});
+
+	describe('format: DD/MM/YYYY HH:mm:ss', () => {
+		it('should format date with time as DD/MM/YYYY HH:mm:ss', () => {
+			expect(formatDate(testDate, 'DD/MM/YYYY HH:mm:ss')).toBe(
+				'15/03/2024 14:30:45'
+			);
+		});
+	});
+
+	describe('format: MM/DD/YYYY HH:mm:ss', () => {
+		it('should format date with time as MM/DD/YYYY HH:mm:ss', () => {
+			expect(formatDate(testDate, 'MM/DD/YYYY HH:mm:ss')).toBe(
+				'03/15/2024 14:30:45'
+			);
+		});
+	});
+
 	describe('DateFormat type', () => {
 		it('should accept all valid format strings', () => {
 			const formats: DateFormat[] = [
@@ -62,6 +94,10 @@ describe('formatDate', () => {
 				'YYYY-MM-DD',
 				'DD/MM/YYYY',
 				'MM/DD/YYYY',
+				'YYYY/MM/DD HH:mm:ss',
+				'YYYY-MM-DD HH:mm:ss',
+				'DD/MM/YYYY HH:mm:ss',
+				'MM/DD/YYYY HH:mm:ss',
 			];
 			formats.forEach((format) => {
 				expect(formatDate(testDate, format)).toBeTruthy();

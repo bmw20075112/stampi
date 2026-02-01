@@ -14,7 +14,7 @@ import { calculateFontSize } from './utils/imageProcessor';
 import type { TimestampConfig } from './utils/imageProcessor';
 
 const DEFAULT_CONFIG: TimestampConfig = {
-	format: 'YYYY/MM/DD',
+	format: 'YYYY/MM/DD HH:mm:ss',
 	position: 'bottom-right',
 	color: '#FFF',
 	fontSize: 30,

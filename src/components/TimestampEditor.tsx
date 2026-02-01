@@ -14,6 +14,16 @@ export default function TimestampEditor({
 	const { t } = useTranslation();
 
 	const formatOptions: { value: DateFormat; label: string }[] = [
+		{ value: 'YYYY/MM/DD HH:mm:ss', label: t('formats.slashFormatWithTime') },
+		{ value: 'YYYY-MM-DD HH:mm:ss', label: t('formats.dashFormatWithTime') },
+		{
+			value: 'DD/MM/YYYY HH:mm:ss',
+			label: t('formats.ddSlashMmSlashYyyyWithTime'),
+		},
+		{
+			value: 'MM/DD/YYYY HH:mm:ss',
+			label: t('formats.mmSlashDdSlashYyyyWithTime'),
+		},
 		{ value: 'YYYY/MM/DD', label: t('formats.slashFormat') },
 		{ value: 'YYYY-MM-DD', label: t('formats.dashFormat') },
 		{ value: 'DD/MM/YYYY', label: t('formats.ddSlashMmSlashYyyy') },

@@ -4,7 +4,7 @@ import ImagePreview from './ImagePreview';
 import type { TimestampConfig } from '../utils/imageProcessor';
 
 const defaultConfig: TimestampConfig = {
-	format: 'YYYY/MM/DD',
+	format: 'YYYY/MM/DD HH:mm:ss',
 	position: 'bottom-right',
 	color: '#FF6B35',
 	fontSize: 30,

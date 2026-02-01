@@ -35,6 +35,10 @@
 		"topLeft": "左上"
 	},
 	"formats": {
+		"slashFormatWithTime": "YYYY/MM/DD HH:mm:ss",
+		"dashFormatWithTime": "YYYY-MM-DD HH:mm:ss",
+		"ddSlashMmSlashYyyyWithTime": "DD/MM/YYYY HH:mm:ss",
+		"mmSlashDdSlashYyyyWithTime": "MM/DD/YYYY HH:mm:ss",
 		"slashFormat": "YYYY/MM/DD",
 		"dashFormat": "YYYY-MM-DD",
 		"ddSlashMmSlashYyyy": "DD/MM/YYYY",

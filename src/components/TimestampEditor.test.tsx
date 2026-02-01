@@ -34,6 +34,10 @@ describe('TimestampEditor', () => {
 			render(<TimestampEditor config={defaultConfig} onChange={vi.fn()} />);
 
 			const formatSelect = screen.getByLabelText(/format/i);
+			expect(formatSelect).toContainHTML('YYYY/MM/DD HH:mm:ss');
+			expect(formatSelect).toContainHTML('YYYY-MM-DD HH:mm:ss');
+			expect(formatSelect).toContainHTML('DD/MM/YYYY HH:mm:ss');
+			expect(formatSelect).toContainHTML('MM/DD/YYYY HH:mm:ss');
 			expect(formatSelect).toContainHTML('YYYY/MM/DD');
 			expect(formatSelect).toContainHTML('YYYY-MM-DD');
 			expect(formatSelect).toContainHTML('DD/MM/YYYY');
