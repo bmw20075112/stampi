@@ -10,7 +10,7 @@
 	"app": {
 		"title": "Time Image",
 		"subtitle": "Upload photos to add EXIF timestamp watermark",
-		"privateNotice": "Pure client-side processing, photos won't be uploaded to server"
+		"privateNotice": "All processing happens locally on your device. No data is collected, stored, or transmitted to any server."
 	},
 	"uploader": {
 		"title": "Upload Photo",

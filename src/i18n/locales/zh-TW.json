@@ -10,7 +10,7 @@
 	"app": {
 		"title": "Time Image",
 		"subtitle": "上傳照片，自動讀取 EXIF 並加上時間碼水印",
-		"privateNotice": "純前端處理，照片不會上傳至伺服器"
+		"privateNotice": "所有處理都在您的設備上進行。不收集、不儲存、不傳輸任何資料到伺服器。"
 	},
 	"uploader": {
 		"title": "上傳照片",
