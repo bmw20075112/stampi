@@ -38,16 +38,18 @@ export default function TimestampEditor({ config, onChange }: TimestampEditorPro
   }
 
   return (
-    <div className="space-y-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+    <div className="space-y-4 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">時間碼設定</h3>
+
       <div>
-        <label htmlFor="format" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label htmlFor="format" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
           格式
         </label>
         <select
           id="format"
           value={config.format}
           onChange={handleFormatChange}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+          className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
         >
           {formatOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -58,14 +60,14 @@ export default function TimestampEditor({ config, onChange }: TimestampEditorPro
       </div>
 
       <div>
-        <label htmlFor="position" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label htmlFor="position" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
           位置
         </label>
         <select
           id="position"
           value={config.position}
           onChange={handlePositionChange}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+          className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
         >
           {positionOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -76,31 +78,41 @@ export default function TimestampEditor({ config, onChange }: TimestampEditorPro
       </div>
 
       <div>
-        <label htmlFor="fontSize" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-          字體大小: {config.fontSize}px
+        <label htmlFor="fontSize" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+          字體大小
         </label>
-        <input
-          id="fontSize"
-          type="range"
-          min="12"
-          max="150"
-          value={config.fontSize}
-          onChange={handleFontSizeChange}
-          className="w-full"
-        />
+        <div className="flex items-center gap-3">
+          <input
+            id="fontSize"
+            type="range"
+            min="12"
+            max="150"
+            value={config.fontSize}
+            onChange={handleFontSizeChange}
+            className="flex-1 h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-blue-500"
+          />
+          <span className="text-sm font-mono text-gray-600 dark:text-gray-400 w-14 text-right">
+            {config.fontSize}px
+          </span>
+        </div>
       </div>
 
       <div>
-        <label htmlFor="color" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label htmlFor="color" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
           顏色
         </label>
-        <input
-          id="color"
-          type="color"
-          value={config.color}
-          onChange={handleColorChange}
-          className="w-full h-10 cursor-pointer"
-        />
+        <div className="flex items-center gap-3">
+          <input
+            id="color"
+            type="color"
+            value={config.color}
+            onChange={handleColorChange}
+            className="w-12 h-10 cursor-pointer rounded-lg border border-gray-300 dark:border-gray-600"
+          />
+          <span className="text-sm font-mono text-gray-600 dark:text-gray-400 uppercase">
+            {config.color}
+          </span>
+        </div>
       </div>
     </div>
   )
