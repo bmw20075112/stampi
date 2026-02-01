@@ -15,9 +15,9 @@ export async function exportImage(
 	canvas: HTMLCanvasElement,
 	options: ExportOptions = {}
 ): Promise<Blob> {
-	// Default to aggressive compression: 0.75 quality for better file sizes
-	// while maintaining good visual quality
-	const { quality = 0.75, format = 'jpeg' } = options;
+	// Very aggressive compression: 0.5 quality (50%) for smaller file sizes
+	// Even at this level, watermark text remains clearly visible
+	const { quality = 0.5, format = 'jpeg' } = options;
 
 	// Validate canvas
 	if (canvas.width === 0 || canvas.height === 0) {
@@ -30,7 +30,7 @@ export async function exportImage(
 
 /**
  * Converts canvas to blob using native browser API
- * Quality parameter (0-1) controls JPEG compression level
+ * Quality parameter (0-1) controls compression level
  */
 function canvasToBlob(
 	canvas: HTMLCanvasElement,
@@ -40,7 +40,6 @@ function canvasToBlob(
 	return new Promise((resolve, reject) => {
 		const mimeType = format === 'webp' ? 'image/webp' : 'image/jpeg';
 
-		// canvas.toBlob applies quality for JPEG/WebP formats
 		canvas.toBlob(
 			(blob) => {
 				if (!blob) {
