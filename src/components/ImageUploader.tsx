@@ -2,8 +2,14 @@ import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { DragEvent, ChangeEvent } from 'react';
 
+function isImageFile(file: File): boolean {
+	if (file.type.startsWith('image/')) return true;
+	const ext = file.name.toLowerCase().split('.').pop();
+	return ext === 'heic' || ext === 'heif';
+}
+
 interface ImageUploaderProps {
-	onImageSelect: (files: File[]) => void;
+	onImageSelect: (files: File[]) => void | Promise<void>;
 }
 
 export default function ImageUploader({ onImageSelect }: ImageUploaderProps) {
@@ -19,9 +25,7 @@ export default function ImageUploader({ onImageSelect }: ImageUploaderProps) {
 		const files = e.target.files;
 		if (files && files.length > 0) {
 			// Convert FileList to Array and filter for images
-			const imageFiles = Array.from(files).filter((file) =>
-				file.type.startsWith('image/')
-			);
+			const imageFiles = Array.from(files).filter(isImageFile);
 			if (imageFiles.length > 0) {
 				onImageSelect(imageFiles);
 			}
@@ -45,9 +49,7 @@ export default function ImageUploader({ onImageSelect }: ImageUploaderProps) {
 		const files = e.dataTransfer.files;
 		if (files && files.length > 0) {
 			// Convert FileList to Array and filter for images
-			const imageFiles = Array.from(files).filter((file) =>
-				file.type.startsWith('image/')
-			);
+			const imageFiles = Array.from(files).filter(isImageFile);
 			if (imageFiles.length > 0) {
 				onImageSelect(imageFiles);
 			}
@@ -98,7 +100,7 @@ export default function ImageUploader({ onImageSelect }: ImageUploaderProps) {
 				ref={fileInputRef}
 				data-testid="file-input"
 				type="file"
-				accept="image/*"
+				accept="image/*,.heic,.heif"
 				multiple
 				onChange={handleFileChange}
 				className="hidden"
