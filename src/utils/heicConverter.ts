@@ -10,7 +10,14 @@ export function isHeicFile(file: File): boolean {
 		return true;
 	}
 
-	const extension = file.name.toLowerCase().split('.').pop();
+	// Handle extension check with edge cases:
+	// - Files without extension (e.g., "README") -> no extension
+	// - Hidden files (e.g., ".gitignore") -> extension is "gitignore"
+	// - Multiple dots (e.g., "photo.backup.heic") -> extension is "heic"
+	const parts = file.name.toLowerCase().split('.');
+	if (parts.length < 2) return false; // No extension
+
+	const extension = parts[parts.length - 1];
 	return extension === 'heic' || extension === 'heif';
 }
 

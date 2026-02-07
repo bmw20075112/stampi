@@ -9,10 +9,10 @@ describe('ImageUploader', () => {
 		expect(screen.getByText(/Upload Photo/i)).toBeInTheDocument();
 	});
 
-	it('should render file input with accept attribute for images', () => {
+	it('should render file input with accept attribute for images including HEIC', () => {
 		render(<ImageUploader onImageSelect={vi.fn()} />);
 		const input = screen.getByTestId('file-input');
-		expect(input).toHaveAttribute('accept', 'image/*');
+		expect(input).toHaveAttribute('accept', 'image/*,.heic,.heif');
 	});
 
 	it('should have multiple attribute on file input', () => {
@@ -70,6 +70,84 @@ describe('ImageUploader', () => {
 		await userEvent.click(uploadArea);
 
 		expect(clickSpy).toHaveBeenCalled();
+	});
+
+	describe('HEIC file acceptance', () => {
+		it('should accept HEIC files with image/heic MIME type', async () => {
+			const onImageSelect = vi.fn();
+			render(<ImageUploader onImageSelect={onImageSelect} />);
+
+			const file = new File(['heic-data'], 'photo.heic', {
+				type: 'image/heic',
+			});
+			const input = screen.getByTestId('file-input');
+
+			await userEvent.upload(input, file);
+
+			expect(onImageSelect).toHaveBeenCalledWith([file]);
+		});
+
+		it('should accept HEIC files with empty MIME type by extension', async () => {
+			const onImageSelect = vi.fn();
+			render(<ImageUploader onImageSelect={onImageSelect} />);
+
+			const file = new File(['heic-data'], 'IMG_1234.HEIC', { type: '' });
+			const input = screen.getByTestId('file-input');
+
+			await userEvent.upload(input, file);
+
+			expect(onImageSelect).toHaveBeenCalledWith([file]);
+		});
+
+		it('should accept HEIF files with empty MIME type by extension', async () => {
+			const onImageSelect = vi.fn();
+			render(<ImageUploader onImageSelect={onImageSelect} />);
+
+			const file = new File(['heif-data'], 'photo.heif', { type: '' });
+			const input = screen.getByTestId('file-input');
+
+			await userEvent.upload(input, file);
+
+			expect(onImageSelect).toHaveBeenCalledWith([file]);
+		});
+
+		it('should reject files without extension', async () => {
+			const onImageSelect = vi.fn();
+			render(<ImageUploader onImageSelect={onImageSelect} />);
+
+			const file = new File(['data'], 'README', { type: '' });
+			const input = screen.getByTestId('file-input');
+
+			await userEvent.upload(input, file);
+
+			expect(onImageSelect).not.toHaveBeenCalled();
+		});
+
+		it('should accept HEIC files with multiple dots in filename', async () => {
+			const onImageSelect = vi.fn();
+			render(<ImageUploader onImageSelect={onImageSelect} />);
+
+			const file = new File(['heic-data'], 'photo.backup.heic', { type: '' });
+			const input = screen.getByTestId('file-input');
+
+			await userEvent.upload(input, file);
+
+			expect(onImageSelect).toHaveBeenCalledWith([file]);
+		});
+
+		it('should accept dropped HEIC files with empty MIME type', () => {
+			const onImageSelect = vi.fn();
+			render(<ImageUploader onImageSelect={onImageSelect} />);
+
+			const uploadArea = screen.getByTestId('upload-area');
+			const file = new File(['heic-data'], 'photo.heic', { type: '' });
+
+			fireEvent.drop(uploadArea, {
+				dataTransfer: { files: [file] },
+			});
+
+			expect(onImageSelect).toHaveBeenCalledWith([file]);
+		});
 	});
 
 	describe('drag and drop', () => {

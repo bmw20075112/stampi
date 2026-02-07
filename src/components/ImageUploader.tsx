@@ -4,7 +4,13 @@ import type { DragEvent, ChangeEvent } from 'react';
 
 function isImageFile(file: File): boolean {
 	if (file.type.startsWith('image/')) return true;
-	const ext = file.name.toLowerCase().split('.').pop();
+
+	// Check for HEIC/HEIF by extension (browsers often don't set MIME type)
+	// Handle edge cases: files without extension return false
+	const parts = file.name.toLowerCase().split('.');
+	if (parts.length < 2) return false; // No extension
+
+	const ext = parts[parts.length - 1];
 	return ext === 'heic' || ext === 'heif';
 }
 
