@@ -9,6 +9,14 @@ vi.mock('exifr', () => ({
 	},
 }));
 
+const { mockProcessFilesForHeic } = vi.hoisted(() => ({
+	mockProcessFilesForHeic: vi.fn(),
+}));
+
+vi.mock('./utils/heicConverter', () => ({
+	processFilesForHeic: mockProcessFilesForHeic,
+}));
+
 import exifr from 'exifr';
 
 describe('App', () => {
@@ -17,6 +25,11 @@ describe('App', () => {
 		// Mock URL.createObjectURL
 		global.URL.createObjectURL = vi.fn(() => 'mock-url');
 		global.URL.revokeObjectURL = vi.fn();
+
+		// Default: passthrough files unchanged (no HEIC conversion needed)
+		mockProcessFilesForHeic.mockImplementation((files: File[]) =>
+			Promise.resolve(files.map((f: File) => ({ file: f, originalFile: null })))
+		);
 	});
 
 	it('should render upload area initially', () => {
@@ -115,5 +128,92 @@ describe('App', () => {
 
 		// Should still show the uploader for new uploads
 		expect(screen.getByTestId('file-input')).toBeInTheDocument();
+	});
+
+	describe('HEIC conversion', () => {
+		it('should convert HEIC files before adding to batch', async () => {
+			const mockDate = new Date('2024-03-15T14:30:00');
+			vi.mocked(exifr.parse).mockResolvedValue({
+				DateTimeOriginal: mockDate,
+			});
+
+			const heicFile = new File(['heic-data'], 'photo.heic', {
+				type: 'image/heic',
+			});
+			const convertedFile = new File(['jpg-data'], 'photo.jpg', {
+				type: 'image/jpeg',
+			});
+
+			mockProcessFilesForHeic.mockResolvedValue([
+				{ file: convertedFile, originalFile: heicFile },
+			]);
+
+			render(<App />);
+
+			const input = screen.getByTestId('file-input');
+			await userEvent.upload(input, heicFile);
+
+			await waitFor(() => {
+				expect(mockProcessFilesForHeic).toHaveBeenCalledWith([heicFile]);
+			});
+		});
+
+		it('should show converting indicator while processing HEIC', async () => {
+			let resolveConversion!: (value: unknown) => void;
+			const conversionPromise = new Promise((resolve) => {
+				resolveConversion = resolve;
+			});
+
+			mockProcessFilesForHeic.mockReturnValue(conversionPromise);
+
+			render(<App />);
+
+			const input = screen.getByTestId('file-input');
+			const heicFile = new File(['heic-data'], 'photo.heic', {
+				type: 'image/heic',
+			});
+			await userEvent.upload(input, heicFile);
+
+			await waitFor(() => {
+				expect(screen.getByText(/converting/i)).toBeInTheDocument();
+			});
+
+			// Resolve conversion
+			const convertedFile = new File(['jpg-data'], 'photo.jpg', {
+				type: 'image/jpeg',
+			});
+			resolveConversion([{ file: convertedFile, originalFile: heicFile }]);
+
+			await waitFor(() => {
+				expect(screen.queryByText(/converting/i)).not.toBeInTheDocument();
+			});
+		});
+
+		it('should handle HEIC conversion errors gracefully', async () => {
+			const consoleErrorSpy = vi
+				.spyOn(console, 'error')
+				.mockImplementation(() => {});
+			mockProcessFilesForHeic.mockRejectedValue(new Error('Conversion failed'));
+
+			render(<App />);
+
+			const input = screen.getByTestId('file-input');
+			const heicFile = new File(['heic-data'], 'photo.heic', {
+				type: 'image/heic',
+			});
+			await userEvent.upload(input, heicFile);
+
+			await waitFor(() => {
+				expect(consoleErrorSpy).toHaveBeenCalledWith(
+					'HEIC conversion failed:',
+					expect.any(Error)
+				);
+			});
+
+			// Converting indicator should be hidden
+			expect(screen.queryByText(/converting/i)).not.toBeInTheDocument();
+
+			consoleErrorSpy.mockRestore();
+		});
 	});
 });

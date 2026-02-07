@@ -12,6 +12,7 @@ import { useBatchProcessing } from './hooks/useBatchProcessing';
 import { formatDate } from './utils/dateFormatter';
 import { calculateFontSize } from './utils/imageProcessor';
 import type { TimestampConfig } from './utils/imageProcessor';
+import { processFilesForHeic } from './utils/heicConverter';
 
 const DEFAULT_CONFIG: TimestampConfig = {
 	format: 'YYYY/MM/DD HH:mm:ss',
@@ -29,6 +30,7 @@ function App() {
 	const [config, setConfig] = useState<TimestampConfig>(DEFAULT_CONFIG);
 	const [showDateInputDialog, setShowDateInputDialog] = useState(false);
 	const [manualDate, setManualDate] = useState<Date | null>(null);
+	const [converting, setConverting] = useState(false);
 
 	// Batch processing state
 	const {
@@ -38,13 +40,14 @@ function App() {
 		startProcessing,
 		updateTimestampForAll,
 		rerenderCompletedImages,
+		updateConfig,
 	} = useBatchProcessing({
 		concurrentLimit: 2,
 	});
 
 	// Get the first image for preview (backward compatibility with single-file mode)
 	const firstImage = images.length > 0 ? images[0] : null;
-	const file = firstImage?.file || null;
+	const fileForExif = firstImage?.originalFile ?? firstImage?.file ?? null;
 	const imageUrl = firstImage?.imageUrl || null;
 
 	const {
@@ -53,7 +56,7 @@ function App() {
 		source,
 		confidence,
 		needsUserInput,
-	} = useTimestamp(file);
+	} = useTimestamp(fileForExif);
 
 	useEffect(() => {
 		const preferredLanguage = localStorage.getItem('preferredLanguage');
@@ -95,29 +98,48 @@ function App() {
 
 	// Show dialog if automatic methods failed and user hasn't provided input
 	useEffect(() => {
-		if (needsUserInput && !manualDate && file) {
-			// eslint-disable-next-line react-hooks/set-state-in-effect
+		if (needsUserInput && !manualDate && fileForExif) {
 			setShowDateInputDialog(true);
 		}
-	}, [needsUserInput, manualDate, file]);
+	}, [needsUserInput, manualDate, fileForExif]);
 
 	const timestamp = useMemo(() => {
 		if (!date) return null;
 		return formatDate(date, config.format);
 	}, [date, config.format]);
 
-	const handleImageSelect = (selectedFiles: File[]) => {
+	const handleImageSelect = async (selectedFiles: File[]) => {
 		if (selectedFiles.length === 0) return;
 
+		// Convert HEIC files to JPEG (preserving originals for EXIF)
+		setConverting(true);
+		let processed;
+		try {
+			processed = await processFilesForHeic(selectedFiles);
+		} catch (error) {
+			console.error('HEIC conversion failed:', error);
+			// Fallback: treat all files as non-HEIC and continue
+			processed = selectedFiles.map((f) => ({ file: f, originalFile: null }));
+			// TODO: Show error notification to user
+		} finally {
+			setConverting(false);
+		}
+
 		// Add files to batch
-		addImages(selectedFiles);
+		addImages(
+			processed.map((p) => p.file),
+			processed.map((p) => p.originalFile)
+		);
+
+		// Sync current config to newly added images (except fontSize, calculated below)
+		updateConfig(config);
 
 		// Reset manual date and dialog when new images uploaded
 		setManualDate(null);
 		setShowDateInputDialog(false);
 
 		// Calculate default font size based on first image
-		const firstFile = selectedFiles[0];
+		const firstFile = processed[0].file;
 		const img = new Image();
 		img.onload = () => {
 			const fontSize = calculateFontSize(img.naturalWidth);
@@ -172,6 +194,33 @@ function App() {
 
 				<div className="space-y-6">
 					<ImageUploader onImageSelect={handleImageSelect} />
+
+					{converting && (
+						<div className="flex items-center justify-center gap-3 py-8">
+							<svg
+								className="animate-spin w-5 h-5 text-blue-500"
+								fill="none"
+								viewBox="0 0 24 24"
+							>
+								<circle
+									className="opacity-25"
+									cx="12"
+									cy="12"
+									r="10"
+									stroke="currentColor"
+									strokeWidth="4"
+								/>
+								<path
+									className="opacity-75"
+									fill="currentColor"
+									d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+								/>
+							</svg>
+							<p className="text-gray-600 dark:text-gray-400">
+								{t('uploader.converting')}
+							</p>
+						</div>
+					)}
 
 					{/* Batch Progress View */}
 					{images.length > 0 && (
@@ -236,7 +285,7 @@ function App() {
 
 			<DateInputDialog
 				open={showDateInputDialog}
-				filename={file?.name || 'unknown'}
+				filename={fileForExif?.name || 'unknown'}
 				defaultDate={manualDate || extractedDate || undefined}
 				onConfirm={handleDateInputConfirm}
 				onSkip={handleDateInputSkip}
