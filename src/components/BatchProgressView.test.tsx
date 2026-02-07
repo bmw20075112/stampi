@@ -10,6 +10,7 @@ describe('BatchProgressView', () => {
 	): ProcessedImage => ({
 		id: '1',
 		file: new File(['content'], 'photo.jpg', { type: 'image/jpeg' }),
+		originalFile: null,
 		imageUrl: 'blob:mock-url',
 		timestamp: '2024/03/15 14:30:45',
 		config: {

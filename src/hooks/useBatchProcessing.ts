@@ -6,6 +6,7 @@ import type { DateSource, Confidence } from './useTimestamp';
 export interface ProcessedImage {
 	id: string;
 	file: File;
+	originalFile: File | null;
 	imageUrl: string;
 	timestamp: string | null;
 	config: TimestampConfig;
@@ -56,12 +57,13 @@ export function useBatchProcessing(options: BatchProcessingOptions = {}) {
 	 * Adds new images to the batch
 	 */
 	const addImages = useCallback(
-		(files: File[]) => {
+		(files: File[], originalFiles?: (File | null)[]) => {
 			if (files.length === 0) return;
 
-			const newImages: ProcessedImage[] = files.map((file) => ({
+			const newImages: ProcessedImage[] = files.map((file, i) => ({
 				id: generateId(),
 				file,
+				originalFile: originalFiles?.[i] ?? null,
 				imageUrl: URL.createObjectURL(file),
 				timestamp: null,
 				config: { ...defaultConfig },

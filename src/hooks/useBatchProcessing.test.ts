@@ -249,6 +249,56 @@ describe('useBatchProcessing', () => {
 		});
 	});
 
+	describe('originalFile support', () => {
+		it('should store originalFile when provided', () => {
+			const { result } = renderHook(() => useBatchProcessing());
+
+			const convertedFile = new File(['converted'], 'photo.jpg', {
+				type: 'image/jpeg',
+			});
+			const originalFile = new File(['original'], 'photo.heic', {
+				type: 'image/heic',
+			});
+
+			act(() => {
+				result.current.addImages([convertedFile], [originalFile]);
+			});
+
+			expect(result.current.images[0].file).toBe(convertedFile);
+			expect(result.current.images[0].originalFile).toBe(originalFile);
+		});
+
+		it('should default originalFile to null when not provided', () => {
+			const { result } = renderHook(() => useBatchProcessing());
+
+			act(() => {
+				const file = new File(['content'], 'photo.jpg', { type: 'image/jpeg' });
+				result.current.addImages([file]);
+			});
+
+			expect(result.current.images[0].originalFile).toBeNull();
+		});
+
+		it('should handle mixed originalFiles (some null, some File)', () => {
+			const { result } = renderHook(() => useBatchProcessing());
+
+			const file1 = new File(['converted'], 'photo1.jpg', {
+				type: 'image/jpeg',
+			});
+			const file2 = new File(['regular'], 'photo2.jpg', { type: 'image/jpeg' });
+			const originalFile1 = new File(['original'], 'photo1.heic', {
+				type: 'image/heic',
+			});
+
+			act(() => {
+				result.current.addImages([file1, file2], [originalFile1, null]);
+			});
+
+			expect(result.current.images[0].originalFile).toBe(originalFile1);
+			expect(result.current.images[1].originalFile).toBeNull();
+		});
+	});
+
 	describe('edge cases', () => {
 		it('should handle adding empty array', () => {
 			const { result } = renderHook(() => useBatchProcessing());
