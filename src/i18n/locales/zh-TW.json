@@ -17,7 +17,8 @@
 		"dragText": "點擊或拖放圖片到這裡",
 		"dragTextBatch": "點擊或拖放多張圖片到這裡",
 		"supportedFormats": "支援 JPEG、PNG、HEIC 格式",
-		"filesSelected": "已選擇 {count} 個檔案"
+		"filesSelected": "已選擇 {count} 個檔案",
+		"converting": "正在轉換 HEIC 檔案..."
 	},
 	"preview": {
 		"noExifTitle": "無法讀取拍攝時間",

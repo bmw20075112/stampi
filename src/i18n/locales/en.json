@@ -17,7 +17,8 @@
 		"dragText": "Click or drag image here",
 		"dragTextBatch": "Click or drag multiple images here",
 		"supportedFormats": "Supported JPEG, PNG, HEIC formats",
-		"filesSelected": "{count} files selected"
+		"filesSelected": "{count} files selected",
+		"converting": "Converting HEIC files..."
 	},
 	"preview": {
 		"noExifTitle": "Unable to read capture time",
