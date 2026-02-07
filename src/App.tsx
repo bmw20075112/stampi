@@ -13,6 +13,7 @@ import { formatDate } from './utils/dateFormatter';
 import { calculateFontSize } from './utils/imageProcessor';
 import type { TimestampConfig } from './utils/imageProcessor';
 import { processFilesForHeic } from './utils/heicConverter';
+import { extractTimestamp } from './utils/timestampExtractor';
 
 const DEFAULT_CONFIG: TimestampConfig = {
 	format: 'YYYY/MM/DD HH:mm:ss',
@@ -125,10 +126,40 @@ function App() {
 			setConverting(false);
 		}
 
-		// Add files to batch
+		// Extract timestamps for each image BEFORE adding to batch
+		const timestampExtractionPromises = processed.map(async (p) => {
+			const fileForExif = p.originalFile || p.file;
+			try {
+				const result = await extractTimestamp(fileForExif);
+				if (result.date) {
+					return {
+						timestamp: formatDate(result.date, config.format),
+						source: result.source,
+						confidence: result.confidence,
+					};
+				}
+				return {
+					timestamp: null,
+					source: result.source,
+					confidence: result.confidence,
+				};
+			} catch (error) {
+				console.error('Failed to extract timestamp:', error);
+				return {
+					timestamp: null,
+					source: 'none' as const,
+					confidence: 'none' as const,
+				};
+			}
+		});
+
+		const timestamps = await Promise.all(timestampExtractionPromises);
+
+		// Add files to batch with timestamps
 		addImages(
 			processed.map((p) => p.file),
-			processed.map((p) => p.originalFile)
+			processed.map((p) => p.originalFile),
+			timestamps
 		);
 
 		// Sync current config to newly added images (except fontSize, calculated below)

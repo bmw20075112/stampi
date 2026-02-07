@@ -55,24 +55,34 @@ export function useBatchProcessing(options: BatchProcessingOptions = {}) {
 
 	/**
 	 * Adds new images to the batch
+	 * Returns the IDs of the newly added images
 	 */
 	const addImages = useCallback(
-		(files: File[], originalFiles?: (File | null)[]) => {
-			if (files.length === 0) return;
+		(
+			files: File[],
+			originalFiles?: (File | null)[],
+			timestamps?: Array<{
+				timestamp: string | null;
+				source: DateSource;
+				confidence: Confidence;
+			}>
+		): string[] => {
+			if (files.length === 0) return [];
 
 			const newImages: ProcessedImage[] = files.map((file, i) => ({
 				id: generateId(),
 				file,
 				originalFile: originalFiles?.[i] ?? null,
 				imageUrl: URL.createObjectURL(file),
-				timestamp: null,
+				timestamp: timestamps?.[i]?.timestamp ?? null,
 				config: { ...defaultConfig },
-				dateSource: 'none',
-				confidence: 'none',
+				dateSource: timestamps?.[i]?.source ?? 'none',
+				confidence: timestamps?.[i]?.confidence ?? 'none',
 				status: 'pending',
 			}));
 
 			setImages((prev) => [...prev, ...newImages]);
+			return newImages.map((img) => img.id);
 		},
 		[generateId, defaultConfig]
 	);
@@ -131,6 +141,32 @@ export function useBatchProcessing(options: BatchProcessingOptions = {}) {
 					dateSource: img.status === 'pending' ? dateSource : img.dateSource,
 					confidence: img.status === 'pending' ? confidence : img.confidence,
 				}))
+			);
+		},
+		[]
+	);
+
+	/**
+	 * Updates timestamp for a specific image by ID
+	 */
+	const updateImageTimestamp = useCallback(
+		(
+			imageId: string,
+			timestamp: string | null,
+			dateSource: DateSource,
+			confidence: Confidence
+		) => {
+			setImages((prev) =>
+				prev.map((img) =>
+					img.id === imageId
+						? {
+								...img,
+								timestamp,
+								dateSource,
+								confidence,
+							}
+						: img
+				)
 			);
 		},
 		[]
@@ -326,6 +362,7 @@ export function useBatchProcessing(options: BatchProcessingOptions = {}) {
 		clearAll,
 		updateConfig,
 		updateTimestampForAll,
+		updateImageTimestamp,
 		rerenderCompletedImages,
 		startProcessing,
 	};
