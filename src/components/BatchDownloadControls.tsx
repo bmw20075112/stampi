@@ -28,12 +28,18 @@ export default function BatchDownloadControls({
 		setDownloadingZip(true);
 
 		try {
-			// Export all canvases to blobs
+			// Export all canvases to blobs with compression
+			// Quality: 0.85 balances file size and visual quality for final output
+			// maxWidth: 2000 prevents memory issues and creates web/mobile-friendly files
+			// Note: HEIC files are first converted at 0.88 quality, then this applies final compression
 			const zipImages = await Promise.all(
 				completedImages.map(async (image) => {
-					const blob = await exportImage(image.canvas!);
+					const blob = await exportImage(image.canvas!, {
+						quality: 0.85,
+						maxWidth: 2000,
+					});
 					const filename = await generateFilename(
-						image.file,
+						image.originalFile ?? image.file,
 						image.timestamp,
 						image.dateSource
 					);
@@ -71,11 +77,14 @@ export default function BatchDownloadControls({
 
 		try {
 			// Export canvas to blob
-			const blob = await exportImage(image.canvas);
+			const blob = await exportImage(image.canvas, {
+				quality: 0.85,
+				maxWidth: 2000,
+			});
 
 			// Generate filename
 			const filename = await generateFilename(
-				image.file,
+				image.originalFile ?? image.file,
 				image.timestamp,
 				image.dateSource
 			);
@@ -174,7 +183,7 @@ export default function BatchDownloadControls({
                   disabled:cursor-not-allowed transition-colors text-left cursor-pointer"
 							>
 								<span className="text-sm text-gray-900 dark:text-gray-100 truncate flex-1">
-									{image.file.name}
+									{(image.originalFile ?? image.file).name}
 								</span>
 								{downloadingIds.has(image.id) ? (
 									<svg
