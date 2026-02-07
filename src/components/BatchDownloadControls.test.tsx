@@ -23,6 +23,7 @@ describe('BatchDownloadControls', () => {
 	): ProcessedImage => ({
 		id: '1',
 		file: new File(['content'], 'photo.jpg', { type: 'image/jpeg' }),
+		originalFile: null,
 		imageUrl: 'blob:mock-url',
 		timestamp: '2024/03/15 14:30:45',
 		config: {
@@ -177,6 +178,38 @@ describe('BatchDownloadControls', () => {
 			await waitFor(() => {
 				expect(HTMLAnchorElement.prototype.click).toHaveBeenCalled();
 			});
+		});
+	});
+
+	describe('original filename preservation', () => {
+		it('should display original filename for converted HEIC files', () => {
+			const images = [
+				createMockImage({
+					id: '1',
+					file: new File([''], 'photo.jpg', { type: 'image/jpeg' }),
+					originalFile: new File([''], 'photo.heic', { type: 'image/heic' }),
+					status: 'completed',
+				}),
+			];
+
+			render(<BatchDownloadControls images={images} />);
+
+			expect(screen.getByText('photo.heic')).toBeInTheDocument();
+		});
+
+		it('should display converted filename when no originalFile', () => {
+			const images = [
+				createMockImage({
+					id: '1',
+					file: new File([''], 'photo.jpg', { type: 'image/jpeg' }),
+					originalFile: null,
+					status: 'completed',
+				}),
+			];
+
+			render(<BatchDownloadControls images={images} />);
+
+			expect(screen.getByText('photo.jpg')).toBeInTheDocument();
 		});
 	});
 
