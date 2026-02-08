@@ -3,10 +3,10 @@ import { calculateFontSize, calculatePosition } from './imageProcessor';
 import type { Position, TimestampConfig } from './imageProcessor';
 
 describe('calculateFontSize', () => {
-	it('should return approximately 3% of image width', () => {
-		expect(calculateFontSize(1000)).toBe(30);
-		expect(calculateFontSize(2000)).toBe(60);
-		expect(calculateFontSize(3000)).toBe(90);
+	it('should return approximately 4% of image width', () => {
+		expect(calculateFontSize(1000)).toBe(40);
+		expect(calculateFontSize(2000)).toBe(80);
+		expect(calculateFontSize(3000)).toBe(120);
 	});
 
 	it('should return minimum size for small images', () => {
@@ -15,8 +15,8 @@ describe('calculateFontSize', () => {
 	});
 
 	it('should cap maximum size for very large images', () => {
-		expect(calculateFontSize(10000)).toBe(150);
-		expect(calculateFontSize(20000)).toBe(150);
+		expect(calculateFontSize(10000)).toBe(400);
+		expect(calculateFontSize(20000)).toBe(400);
 	});
 });
 

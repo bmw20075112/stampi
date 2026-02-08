@@ -27,9 +27,9 @@ export interface Coordinates {
 	y: number;
 }
 
-const MIN_FONT_SIZE = 12;
-const MAX_FONT_SIZE = 150;
-const FONT_SIZE_RATIO = 0.03;
+export const MIN_FONT_SIZE = 12;
+export const MAX_FONT_SIZE = 400;
+const FONT_SIZE_RATIO = 0.04;
 
 export function calculateFontSize(imageWidth: number): number {
 	const size = Math.round(imageWidth * FONT_SIZE_RATIO);

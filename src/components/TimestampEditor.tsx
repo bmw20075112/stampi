@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { TimestampConfig, Position } from '../utils/imageProcessor';
+import { MIN_FONT_SIZE, MAX_FONT_SIZE } from '../utils/imageProcessor';
 import type { DateFormat } from '../utils/dateFormatter';
 
 interface TimestampEditorProps {
@@ -130,8 +131,8 @@ export default function TimestampEditor({
 					<input
 						id="fontSize"
 						type="range"
-						min="12"
-						max="150"
+						min={MIN_FONT_SIZE}
+						max={MAX_FONT_SIZE}
 						value={config.fontSize}
 						onChange={handleFontSizeChange}
 						className="flex-1 h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-blue-500"
