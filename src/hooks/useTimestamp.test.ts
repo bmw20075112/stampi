@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import useTimestamp from './useTimestamp';
+import useTimestamp from '@/hooks/useTimestamp';
 
 vi.mock('exifr', () => ({
 	default: {
@@ -8,12 +8,12 @@ vi.mock('exifr', () => ({
 	},
 }));
 
-vi.mock('../utils/filenameParser', () => ({
+vi.mock('@/utils/filenameParser', () => ({
 	parseFilename: vi.fn(),
 }));
 
 import exifr from 'exifr';
-import { parseFilename } from '../utils/filenameParser';
+import { parseFilename } from '@/utils/filenameParser';
 
 describe('useTimestamp', () => {
 	beforeEach(() => {

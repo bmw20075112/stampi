@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import BatchProgressView from './BatchProgressView';
-import type { ProcessedImage } from '../hooks/useBatchProcessing';
+import BatchProgressView from '@/components/BatchProgressView';
+import type { ProcessedImage } from '@/hooks/useBatchProcessing';
 
 describe('BatchProgressView', () => {
 	const createMockImage = (

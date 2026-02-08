@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import type { DateSource, Confidence } from '../hooks/useTimestamp';
+import type { DateSource, Confidence } from '@/hooks/useTimestamp';
 
 interface DateSourceBadgeProps {
 	source: DateSource;

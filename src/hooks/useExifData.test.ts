@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import useExifData from './useExifData';
+import useExifData from '@/hooks/useExifData';
 
 vi.mock('exifr', () => ({
 	default: {

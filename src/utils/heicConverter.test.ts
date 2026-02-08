@@ -12,7 +12,7 @@ import {
 	isHeicFile,
 	convertHeicToJpeg,
 	processFilesForHeic,
-} from './heicConverter';
+} from '@/utils/heicConverter';
 
 describe('heicConverter', () => {
 	beforeEach(() => {

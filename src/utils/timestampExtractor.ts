@@ -1,6 +1,6 @@
 import exifr from 'exifr';
-import { parseFilename } from './filenameParser';
-import type { DateSource, Confidence } from '../hooks/useTimestamp';
+import { parseFilename } from '@/utils/filenameParser';
+import type { DateSource, Confidence } from '@/hooks/useTimestamp';
 
 export interface ExtractedTimestamp {
 	date: Date | null;

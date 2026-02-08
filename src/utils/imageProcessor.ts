@@ -1,4 +1,4 @@
-import type { DateFormat } from './dateFormatter';
+import type { DateFormat } from '@/utils/dateFormatter';
 
 export type Position =
 	| 'bottom-right'

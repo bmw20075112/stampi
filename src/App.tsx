@@ -1,20 +1,20 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import ImageUploader from './components/ImageUploader';
-import ImagePreview from './components/ImagePreview';
-import TimestampEditor from './components/TimestampEditor';
-import LanguageSwitcher from './components/LanguageSwitcher';
-import DateInputDialog from './components/DateInputDialog';
-import BatchProgressView from './components/BatchProgressView';
-import BatchDownloadControls from './components/BatchDownloadControls';
-import Toast from './components/Toast';
-import useTimestamp from './hooks/useTimestamp';
-import { useBatchProcessing } from './hooks/useBatchProcessing';
-import { formatDate } from './utils/dateFormatter';
-import { calculateFontSize } from './utils/imageProcessor';
-import type { TimestampConfig } from './utils/imageProcessor';
-import { processFilesForHeic } from './utils/heicConverter';
-import { extractTimestamp } from './utils/timestampExtractor';
+import ImageUploader from '@/components/ImageUploader';
+import ImagePreview from '@/components/ImagePreview';
+import TimestampEditor from '@/components/TimestampEditor';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import DateInputDialog from '@/components/DateInputDialog';
+import BatchProgressView from '@/components/BatchProgressView';
+import BatchDownloadControls from '@/components/BatchDownloadControls';
+import Toast from '@/components/Toast';
+import useTimestamp from '@/hooks/useTimestamp';
+import { useBatchProcessing } from '@/hooks/useBatchProcessing';
+import { formatDate } from '@/utils/dateFormatter';
+import { calculateFontSize } from '@/utils/imageProcessor';
+import type { TimestampConfig } from '@/utils/imageProcessor';
+import { processFilesForHeic } from '@/utils/heicConverter';
+import { extractTimestamp } from '@/utils/timestampExtractor';
 
 const DEFAULT_CONFIG: TimestampConfig = {
 	format: 'YYYY/MM/DD HH:mm:ss',

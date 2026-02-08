@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { formatDate } from './dateFormatter';
-import type { DateFormat } from './dateFormatter';
+import { formatDate } from '@/utils/dateFormatter';
+import type { DateFormat } from '@/utils/dateFormatter';
 
 describe('formatDate', () => {
 	const testDate = new Date('2024-03-15T14:30:45');

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import DateSourceBadge from './DateSourceBadge';
-import type { DateSource } from '../hooks/useTimestamp';
+import DateSourceBadge from '@/components/DateSourceBadge';
+import type { DateSource } from '@/hooks/useTimestamp';
 
 describe('DateSourceBadge', () => {
 	it('should render EXIF source text', () => {

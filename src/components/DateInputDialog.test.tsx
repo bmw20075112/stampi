@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import DateInputDialog from './DateInputDialog';
+import DateInputDialog from '@/components/DateInputDialog';
 
 describe('DateInputDialog', () => {
 	it('should not render when closed', () => {
@@ -40,9 +40,9 @@ describe('DateInputDialog', () => {
 			/>
 		);
 
-		expect(
-			(screen.getByLabelText(/Filename/i) as HTMLInputElement).value
-		).toBe('IMG_20240315.jpg');
+		expect((screen.getByLabelText(/Filename/i) as HTMLInputElement).value).toBe(
+			'IMG_20240315.jpg'
+		);
 	});
 
 	it('should have date and time input fields', () => {

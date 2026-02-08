@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { ProcessedImage } from '../hooks/useBatchProcessing';
-import { createZip } from '../utils/zipGenerator';
-import { exportImage } from '../utils/imageExporter';
-import { generateFilename } from '../utils/filenameGenerator';
-import Toast from './Toast';
+import type { ProcessedImage } from '@/hooks/useBatchProcessing';
+import { createZip } from '@/utils/zipGenerator';
+import { exportImage } from '@/utils/imageExporter';
+import { generateFilename } from '@/utils/filenameGenerator';
+import Toast from '@/components/Toast';
 
 interface BatchDownloadControlsProps {
 	images: ProcessedImage[];

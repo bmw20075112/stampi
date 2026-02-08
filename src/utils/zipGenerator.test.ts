@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { createZip } from './zipGenerator';
-import type { ZipImage } from './zipGenerator';
+import { createZip } from '@/utils/zipGenerator';
+import type { ZipImage } from '@/utils/zipGenerator';
 
 describe('zipGenerator', () => {
 	function createMockBlob(size: number, type = 'image/jpeg'): Blob {

@@ -1,17 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import BatchDownloadControls from './BatchDownloadControls';
-import type { ProcessedImage } from '../hooks/useBatchProcessing';
+import BatchDownloadControls from '@/components/BatchDownloadControls';
+import type { ProcessedImage } from '@/hooks/useBatchProcessing';
 
 // Mock the ZIP and export utilities
-vi.mock('../utils/zipGenerator', () => ({
+vi.mock('@/utils/zipGenerator', () => ({
 	createZip: vi.fn(() =>
 		Promise.resolve(new Blob(['zip content'], { type: 'application/zip' }))
 	),
 }));
 
-vi.mock('../utils/imageExporter', () => ({
+vi.mock('@/utils/imageExporter', () => ({
 	exportImage: vi.fn(() =>
 		Promise.resolve(new Blob(['image content'], { type: 'image/jpeg' }))
 	),

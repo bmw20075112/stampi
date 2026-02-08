@@ -1,4 +1,4 @@
-import type { DateSource } from '../hooks/useTimestamp';
+import type { DateSource } from '@/hooks/useTimestamp';
 
 const GENERIC_NAMES = [
 	'blob',

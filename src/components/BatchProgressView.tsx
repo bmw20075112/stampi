@@ -1,4 +1,4 @@
-import type { ProcessedImage } from '../hooks/useBatchProcessing';
+import type { ProcessedImage } from '@/hooks/useBatchProcessing';
 
 interface BatchProgressViewProps {
 	images: ProcessedImage[];

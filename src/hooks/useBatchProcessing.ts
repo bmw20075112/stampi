@@ -1,8 +1,8 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
-import type { TimestampConfig } from '../utils/imageProcessor';
-import { renderTimestamp } from '../utils/imageProcessor';
-import type { DateSource, Confidence } from './useTimestamp';
-import { generateFilename } from '../utils/filenameGenerator';
+import type { TimestampConfig } from '@/utils/imageProcessor';
+import { renderTimestamp } from '@/utils/imageProcessor';
+import type { DateSource, Confidence } from '@/hooks/useTimestamp';
+import { generateFilename } from '@/utils/filenameGenerator';
 
 export interface ProcessedImage {
 	id: string;

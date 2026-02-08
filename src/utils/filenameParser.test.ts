@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseFilename, isValidDate } from './filenameParser';
+import { parseFilename, isValidDate } from '@/utils/filenameParser';
 
 describe('isValidDate', () => {
 	it('should accept valid dates in range 1970-2100', () => {

@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useBatchProcessing } from './useBatchProcessing';
+import { useBatchProcessing } from '@/hooks/useBatchProcessing';
 
 // Mock the useTimestamp hook
-vi.mock('./useTimestamp', () => ({
+vi.mock('@/hooks/useTimestamp', () => ({
 	useTimestamp: () => ({
 		timestamp: '2024/03/15 14:30:45',
 		dateSource: 'exif' as const,
@@ -12,7 +12,7 @@ vi.mock('./useTimestamp', () => ({
 }));
 
 // Mock renderTimestamp
-vi.mock('../utils/imageProcessor', () => ({
+vi.mock('@/utils/imageProcessor', () => ({
 	renderTimestamp: vi.fn((canvas) => {
 		// Simple mock implementation
 		const ctx = canvas.getContext('2d');

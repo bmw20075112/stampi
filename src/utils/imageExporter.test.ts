@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { exportImage } from './imageExporter';
+import { exportImage } from '@/utils/imageExporter';
 
 // Mock compressorjs
 vi.mock('compressorjs', () => {

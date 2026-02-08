@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { extractTimestamp } from './timestampExtractor';
+import { extractTimestamp } from '@/utils/timestampExtractor';
 
 // Mock exifr
 vi.mock('exifr', () => ({
@@ -9,12 +9,12 @@ vi.mock('exifr', () => ({
 }));
 
 // Mock filenameParser
-vi.mock('./filenameParser', () => ({
+vi.mock('@/utils/filenameParser', () => ({
 	parseFilename: vi.fn(),
 }));
 
 import exifr from 'exifr';
-import { parseFilename } from './filenameParser';
+import { parseFilename } from '@/utils/filenameParser';
 
 describe('timestampExtractor', () => {
 	beforeEach(() => {

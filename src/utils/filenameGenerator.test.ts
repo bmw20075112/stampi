@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateFilename } from './filenameGenerator';
+import { generateFilename } from '@/utils/filenameGenerator';
 
 describe('filenameGenerator', () => {
 	describe('original filename preservation', () => {

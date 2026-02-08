@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import ImageUploader from './ImageUploader';
+import ImageUploader from '@/components/ImageUploader';
 
 describe('ImageUploader', () => {
 	it('should render upload area', () => {

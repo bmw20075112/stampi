@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import exifr from 'exifr';
-import { parseFilename } from '../utils/filenameParser';
+import { parseFilename } from '@/utils/filenameParser';
 
 export type DateSource =
 	| 'exif-datetime-original'

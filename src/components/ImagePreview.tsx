@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { renderTimestamp } from '../utils/imageProcessor';
-import DateSourceBadge from './DateSourceBadge';
-import type { TimestampConfig } from '../utils/imageProcessor';
-import type { DateSource, Confidence } from '../hooks/useTimestamp';
+import { renderTimestamp } from '@/utils/imageProcessor';
+import DateSourceBadge from '@/components/DateSourceBadge';
+import type { TimestampConfig } from '@/utils/imageProcessor';
+import type { DateSource, Confidence } from '@/hooks/useTimestamp';
 
 interface ImagePreviewProps {
 	imageUrl: string;

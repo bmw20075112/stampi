@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import ImagePreview from './ImagePreview';
-import type { TimestampConfig } from '../utils/imageProcessor';
+import ImagePreview from '@/components/ImagePreview';
+import type { TimestampConfig } from '@/utils/imageProcessor';
 
 const defaultConfig: TimestampConfig = {
 	format: 'YYYY/MM/DD HH:mm:ss',
