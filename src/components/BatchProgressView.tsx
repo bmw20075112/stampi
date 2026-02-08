@@ -100,7 +100,7 @@ export default function BatchProgressView({
 						<button
 							onClick={() => onRemove(image.id)}
 							aria-label={`Remove ${image.file.name}`}
-							className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+							className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors cursor-pointer"
 						>
 							<svg
 								className="w-5 h-5"

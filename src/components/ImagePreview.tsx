@@ -159,7 +159,7 @@ export default function ImagePreview({
 					<button
 						onClick={onPrevious}
 						disabled={currentIndex === 0}
-						className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg border border-gray-200 dark:border-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
+						className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg border border-gray-200 dark:border-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer"
 						aria-label={t('preview.previous')}
 					>
 						<svg
@@ -191,7 +191,7 @@ export default function ImagePreview({
 					<button
 						onClick={onNext}
 						disabled={currentIndex === totalImages - 1}
-						className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg border border-gray-200 dark:border-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
+						className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg border border-gray-200 dark:border-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer"
 						aria-label={t('preview.next')}
 					>
 						<span className="hidden sm:inline">{t('preview.next')}</span>
