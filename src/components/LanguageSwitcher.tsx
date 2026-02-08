@@ -22,7 +22,7 @@ export default function LanguageSwitcher() {
 					className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
 						i18n.language === lang.code
 							? 'bg-blue-600 text-white shadow-md'
-							: 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600'
+							: 'cursor-pointer bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600'
 					}`}
 				>
 					{lang.name}
