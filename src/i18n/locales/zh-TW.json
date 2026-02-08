@@ -22,7 +22,10 @@
 	},
 	"preview": {
 		"noExifTitle": "無法讀取拍攝時間",
-		"noExifMessage": "此圖片可能沒有 EXIF 資料"
+		"noExifMessage": "此圖片可能沒有 EXIF 資料",
+		"imageCount": "第 {current} 張 / 共 {total} 張",
+		"previous": "上一張",
+		"next": "下一張"
 	},
 	"editor": {
 		"title": "時間碼設定",

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import ImageUploader from '@/components/ImageUploader';
 import ImagePreview from '@/components/ImagePreview';
@@ -33,6 +33,7 @@ function App() {
 	const [manualDate, setManualDate] = useState<Date | null>(null);
 	const [converting, setConverting] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
 	// Batch processing state
 	const {
@@ -58,16 +59,17 @@ function App() {
 		}, 100);
 	}, [rerenderCompletedImages]);
 
-	// Get the first image for preview (backward compatibility with single-file mode)
-	const firstImage = images.length > 0 ? images[0] : null;
-	const fileForExif = firstImage?.originalFile ?? firstImage?.file ?? null;
-	const imageUrl = firstImage?.imageUrl || null;
+	// Get the current image for preview based on currentImageIndex
+	const currentImage =
+		images.length > 0 ? (images[currentImageIndex] ?? images[0]) : null;
+	const fileForExif = currentImage?.originalFile ?? currentImage?.file ?? null;
+	const imageUrl = currentImage?.imageUrl || null;
 
 	const {
 		date: extractedDate,
 		loading,
-		source,
-		confidence,
+		source: extractedSource,
+		confidence: extractedConfidence,
 		needsUserInput,
 	} = useTimestamp(fileForExif);
 
@@ -78,8 +80,21 @@ function App() {
 		}
 	}, [i18n]);
 
-	// Use manual date if provided, otherwise use extracted date
-	const date = manualDate || extractedDate;
+	// Ensure currentImageIndex stays within bounds when images change
+	useEffect(() => {
+		if (images.length > 0 && currentImageIndex >= images.length) {
+			setCurrentImageIndex(Math.max(0, images.length - 1));
+		}
+	}, [images.length, currentImageIndex]);
+
+	// Use current image's data if available, otherwise fall back to extracted/manual
+	const timestamp = currentImage?.timestamp || null;
+	const source = currentImage?.dateSource || extractedSource;
+	const confidence = currentImage?.confidence || extractedConfidence;
+
+	// Only show loading when we have no processed images yet
+	// Don't show loading when switching between already processed images
+	const shouldShowLoading = loading && images.length === 0;
 
 	// Reformat all timestamps when format changes (preserves each image's individual date)
 	useEffect(() => {
@@ -117,11 +132,6 @@ function App() {
 			setShowDateInputDialog(true);
 		}
 	}, [needsUserInput, manualDate, fileForExif]);
-
-	const timestamp = useMemo(() => {
-		if (!date) return null;
-		return formatDate(date, config.format);
-	}, [date, config.format]);
 
 	const handleImageSelect = async (selectedFiles: File[]) => {
 		if (selectedFiles.length === 0) return;
@@ -185,9 +195,10 @@ function App() {
 		// Sync current config to newly added images
 		updateConfig(config);
 
-		// Reset manual date and dialog when new images uploaded
+		// Reset manual date, dialog, and image index when new images uploaded
 		setManualDate(null);
 		setShowDateInputDialog(false);
+		setCurrentImageIndex(0);
 	};
 
 	const handleDateInputConfirm = (confirmedDate: Date) => {
@@ -201,6 +212,14 @@ function App() {
 
 	const handleEditDate = () => {
 		setShowDateInputDialog(true);
+	};
+
+	const handlePreviousImage = () => {
+		setCurrentImageIndex((prev) => Math.max(0, prev - 1));
+	};
+
+	const handleNextImage = () => {
+		setCurrentImageIndex((prev) => Math.min(images.length - 1, prev + 1));
 	};
 
 	return (
@@ -270,7 +289,7 @@ function App() {
 					)}
 
 					{/* Single Image Preview (show first image) */}
-					{loading && (
+					{shouldShowLoading && (
 						<div className="flex items-center justify-center gap-3 py-8">
 							<svg
 								className="animate-spin w-5 h-5 text-blue-500"
@@ -297,7 +316,7 @@ function App() {
 						</div>
 					)}
 
-					{imageUrl && !loading && (
+					{imageUrl && !shouldShowLoading && (
 						<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 							<div className="lg:col-span-2 order-2 lg:order-1">
 								<ImagePreview
@@ -308,6 +327,11 @@ function App() {
 									dateConfidence={confidence}
 									onRequestDateInput={() => setShowDateInputDialog(true)}
 									onEditDate={handleEditDate}
+									currentIndex={currentImageIndex}
+									totalImages={images.length}
+									onPrevious={handlePreviousImage}
+									onNext={handleNextImage}
+									preRenderedCanvas={currentImage?.canvas}
 								/>
 							</div>
 							<div className="order-1 lg:order-2">

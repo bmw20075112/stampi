@@ -22,7 +22,10 @@
 	},
 	"preview": {
 		"noExifTitle": "Unable to read capture time",
-		"noExifMessage": "This image may not have EXIF data"
+		"noExifMessage": "This image may not have EXIF data",
+		"imageCount": "Image {current} of {total}",
+		"previous": "Previous",
+		"next": "Next"
 	},
 	"editor": {
 		"title": "Timestamp Settings",
