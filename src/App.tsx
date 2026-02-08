@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import ImageUploader from './components/ImageUploader';
 import ImagePreview from './components/ImagePreview';
@@ -48,6 +48,17 @@ function App() {
 		concurrentLimit: 2,
 	});
 
+	// Debounced re-rendering to avoid excessive canvas operations
+	const rerenderTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+	const scheduleRerender = useCallback(() => {
+		if (rerenderTimeoutRef.current) {
+			clearTimeout(rerenderTimeoutRef.current);
+		}
+		rerenderTimeoutRef.current = setTimeout(() => {
+			void rerenderCompletedImages();
+		}, 100);
+	}, [rerenderCompletedImages]);
+
 	// Get the first image for preview (backward compatibility with single-file mode)
 	const firstImage = images.length > 0 ? images[0] : null;
 	const fileForExif = firstImage?.originalFile ?? firstImage?.file ?? null;
@@ -71,14 +82,15 @@ function App() {
 	// Use manual date if provided, otherwise use extracted date
 	const date = manualDate || extractedDate;
 
-	// Apply timestamp to all images when date changes
+	// Apply timestamp to all images when date or format changes
 	useEffect(() => {
-		const formattedTimestamp = date ? formatDate(date, config.format) : null;
-		if (formattedTimestamp && images.length > 0) {
-			updateTimestampForAll(formattedTimestamp, source, confidence);
-			// Re-render completed images with updated timestamp (async, no need to wait)
-			void rerenderCompletedImages();
-		}
+		if (!date || images.length === 0) return;
+
+		const formattedTimestamp = formatDate(date, config.format);
+		updateTimestampForAll(formattedTimestamp, source, confidence);
+
+		// Schedule re-render (debounced to avoid excessive operations)
+		scheduleRerender();
 	}, [
 		date,
 		config.format,
@@ -86,8 +98,20 @@ function App() {
 		confidence,
 		images.length,
 		updateTimestampForAll,
-		rerenderCompletedImages,
+		scheduleRerender,
 	]);
+
+	// Sync config changes to all images
+	// Handles all config properties: format, fontSize, color, position, shadow
+	useEffect(() => {
+		if (images.length === 0) return;
+
+		// Immediately sync config to all images
+		updateConfig(config);
+
+		// Schedule re-render (debounced to avoid excessive operations during slider adjustments)
+		scheduleRerender();
+	}, [config, images.length, updateConfig, scheduleRerender]);
 
 	// Auto-start batch processing when new images are added
 	useEffect(() => {
