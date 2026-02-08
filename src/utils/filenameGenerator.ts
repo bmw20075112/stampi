@@ -12,6 +12,7 @@ const GENERIC_NAMES = [
  * Generates an intelligent filename for a processed image
  *
  * Priority waterfall:
+ * 0. Cached filename (if provided)
  * 1. Original filename (if not generic)
  * 2. Date-based naming for EXIF/filename sources
  * 3. SHA-256 hash fallback
@@ -19,8 +20,14 @@ const GENERIC_NAMES = [
 export async function generateFilename(
 	file: File,
 	timestamp: string | null,
-	dateSource: DateSource
+	dateSource: DateSource,
+	cachedFilename?: string
 ): Promise<string> {
+	// 0. Use cached filename if available
+	if (cachedFilename) {
+		return cachedFilename;
+	}
+
 	// 1. Try original filename (if not generic)
 	const basename = getBasename(file.name);
 	if (basename && !isGenericName(file.name)) {

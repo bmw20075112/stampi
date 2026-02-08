@@ -4,6 +4,7 @@ import type { ProcessedImage } from '../hooks/useBatchProcessing';
 import { createZip } from '../utils/zipGenerator';
 import { exportImage } from '../utils/imageExporter';
 import { generateFilename } from '../utils/filenameGenerator';
+import Toast from './Toast';
 
 interface BatchDownloadControlsProps {
 	images: ProcessedImage[];
@@ -15,6 +16,7 @@ export default function BatchDownloadControls({
 	const { t } = useTranslation();
 	const [downloadingZip, setDownloadingZip] = useState(false);
 	const [downloadingIds, setDownloadingIds] = useState<Set<string>>(new Set());
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
 	const completedImages = images.filter(
 		(img) => img.status === 'completed' && img.canvas
@@ -41,7 +43,8 @@ export default function BatchDownloadControls({
 					const filename = await generateFilename(
 						image.originalFile ?? image.file,
 						image.timestamp,
-						image.dateSource
+						image.dateSource,
+						image.cachedFilename
 					);
 
 					return {
@@ -61,8 +64,9 @@ export default function BatchDownloadControls({
 			link.download = `time-image-batch-${new Date().getTime()}.zip`;
 			link.click();
 			URL.revokeObjectURL(url);
-		} catch {
-			// Silently handle errors
+		} catch (error) {
+			console.error('Download failed:', error);
+			setErrorMessage('Download failed. Please try again.');
 		} finally {
 			setDownloadingZip(false);
 		}
@@ -86,7 +90,8 @@ export default function BatchDownloadControls({
 			const filename = await generateFilename(
 				image.originalFile ?? image.file,
 				image.timestamp,
-				image.dateSource
+				image.dateSource,
+				image.cachedFilename
 			);
 
 			// Trigger download
@@ -96,8 +101,9 @@ export default function BatchDownloadControls({
 			link.download = `${filename}.jpg`;
 			link.click();
 			URL.revokeObjectURL(url);
-		} catch {
-			// Silently handle errors
+		} catch (error) {
+			console.error('Download failed:', error);
+			setErrorMessage('Download failed. Please try again.');
 		} finally {
 			setDownloadingIds((prev) => {
 				const next = new Set(prev);
@@ -224,6 +230,14 @@ export default function BatchDownloadControls({
 						))}
 					</div>
 				</div>
+			)}
+
+			{errorMessage && (
+				<Toast
+					message={errorMessage}
+					type="error"
+					onClose={() => setErrorMessage(null)}
+				/>
 			)}
 		</div>
 	);

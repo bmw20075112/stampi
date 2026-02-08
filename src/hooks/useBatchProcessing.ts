@@ -2,6 +2,7 @@ import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import type { TimestampConfig } from '../utils/imageProcessor';
 import { renderTimestamp } from '../utils/imageProcessor';
 import type { DateSource, Confidence } from './useTimestamp';
+import { generateFilename } from '../utils/filenameGenerator';
 
 export interface ProcessedImage {
 	id: string;
@@ -15,6 +16,7 @@ export interface ProcessedImage {
 	status: 'pending' | 'processing' | 'completed' | 'error';
 	canvas?: HTMLCanvasElement;
 	error?: string;
+	cachedFilename?: string; // Cached filename to avoid recalculating hash
 }
 
 export interface BatchProcessingOptions {
@@ -50,7 +52,7 @@ export function useBatchProcessing(options: BatchProcessingOptions = {}) {
 	 * Generates a unique ID for an image
 	 */
 	const generateId = useCallback(() => {
-		return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+		return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 	}, []);
 
 	/**
@@ -175,41 +177,101 @@ export function useBatchProcessing(options: BatchProcessingOptions = {}) {
 	/**
 	 * Re-render completed images with updated timestamp
 	 */
-	const rerenderCompletedImages = useCallback(() => {
+	const rerenderCompletedImages = useCallback(async () => {
+		// Get completed images that need re-rendering
+		const completedImages = imagesRef.current.filter(
+			(img) => img.status === 'completed' && img.canvas && img.timestamp
+		);
+
+		if (completedImages.length === 0) return;
+
+		// Load all images and render canvases in parallel
+		const updates = await Promise.all(
+			completedImages.map(
+				(img) =>
+					new Promise<{ id: string; canvas: HTMLCanvasElement } | null>(
+						(resolve) => {
+							const imageElement = new Image();
+							imageElement.src = img.imageUrl;
+							imageElement.onload = () => {
+								const newCanvas = document.createElement('canvas');
+								newCanvas.width = imageElement.naturalWidth;
+								newCanvas.height = imageElement.naturalHeight;
+								const ctx = newCanvas.getContext('2d');
+								if (ctx) {
+									ctx.drawImage(imageElement, 0, 0);
+									renderTimestamp(
+										newCanvas,
+										imageElement,
+										img.timestamp ?? '',
+										img.config
+									);
+									resolve({ id: img.id, canvas: newCanvas });
+								} else {
+									resolve(null);
+								}
+							};
+							imageElement.onerror = () => resolve(null);
+						}
+					)
+			)
+		);
+
+		// Batch update all canvases in a single state update
 		setImages((prev) =>
 			prev.map((img) => {
-				// Only re-render if image is completed and has canvas but might have updated timestamp
-				if (img.status === 'completed' && img.canvas && img.timestamp) {
-					const imageElement = new Image();
-					imageElement.src = img.imageUrl;
-					imageElement.onload = () => {
-						const newCanvas = document.createElement('canvas');
-						newCanvas.width = imageElement.naturalWidth;
-						newCanvas.height = imageElement.naturalHeight;
-						const ctx = newCanvas.getContext('2d');
-						if (ctx) {
-							ctx.drawImage(imageElement, 0, 0);
-							renderTimestamp(
-								newCanvas,
-								imageElement,
-								img.timestamp ?? '',
-								img.config
-							);
-							// Update the image with the new canvas
-							setImages((latest) =>
-								latest.map((i) =>
-									i.id === img.id ? { ...i, canvas: newCanvas } : i
-								)
-							);
-						}
-					};
-					return img;
-				}
-				return img;
+				const update = updates.find((u) => u?.id === img.id);
+				return update ? { ...img, canvas: update.canvas } : img;
 			})
 		);
 	}, []);
 
+	/**
+	 * Helper: Load an image from a URL
+	 */
+	const loadImage = (url: string): Promise<HTMLImageElement> => {
+		return new Promise((resolve, reject) => {
+			const img = new Image();
+			img.src = url;
+			img.onload = () => resolve(img);
+			img.onerror = () => reject(new Error('Failed to load image'));
+		});
+	};
+
+	/**
+	 * Helper: Create and initialize a canvas from an image
+	 */
+	const createCanvasFromImage = (
+		img: HTMLImageElement
+	): HTMLCanvasElement | null => {
+		const canvas = document.createElement('canvas');
+		canvas.width = img.naturalWidth;
+		canvas.height = img.naturalHeight;
+
+		const ctx = canvas.getContext('2d');
+		if (!ctx) {
+			return null;
+		}
+
+		ctx.drawImage(img, 0, 0);
+		return canvas;
+	};
+
+	/**
+	 * Helper: Determine the timestamp to render with fallback logic
+	 */
+	const determineTimestamp = (
+		imageId: string,
+		currentTimestamp: string | null
+	): string | null => {
+		if (currentTimestamp) {
+			return currentTimestamp;
+		}
+
+		// Check if timestamp was updated while we were processing
+		const latestImage = imagesRef.current.find((img) => img.id === imageId);
+		return latestImage?.timestamp ?? null;
+	};
 	/**
 	 * Processes a single image
 	 */
@@ -231,51 +293,30 @@ export function useBatchProcessing(options: BatchProcessingOptions = {}) {
 
 			try {
 				// Load image
-				const img = new Image();
-				img.src = image.imageUrl;
-				await new Promise<void>((resolve, reject) => {
-					img.onload = () => {
-						resolve();
-					};
-					img.onerror = () => reject(new Error('Failed to load image'));
-				});
+				const img = await loadImage(image.imageUrl);
 
-				// Create canvas
-				const canvas = document.createElement('canvas');
-				canvas.width = img.naturalWidth;
-				canvas.height = img.naturalHeight;
-
-				// Draw image
-				const ctx = canvas.getContext('2d');
-				if (!ctx) {
+				// Create canvas from image
+				const canvas = createCanvasFromImage(img);
+				if (!canvas) {
 					throw new Error('Failed to get canvas context');
 				}
-				ctx.drawImage(img, 0, 0);
+
+				// Determine timestamp to render (with fallback logic)
+				const timestampToRender = determineTimestamp(imageId, image.timestamp);
 
 				// Render timestamp if available
-				let timestampToRender = image.timestamp;
-				if (image.timestamp) {
-					renderTimestamp(canvas, img, image.timestamp, image.config);
-				} else {
-					// Check if timestamp was updated while we were processing
-					const latestImage = imagesRef.current.find(
-						(img) => img.id === imageId
-					);
-					if (
-						latestImage?.timestamp &&
-						latestImage.timestamp !== image.timestamp
-					) {
-						timestampToRender = latestImage.timestamp;
-						renderTimestamp(
-							canvas,
-							img,
-							latestImage.timestamp,
-							latestImage.config
-						);
-					}
+				if (timestampToRender) {
+					renderTimestamp(canvas, img, timestampToRender, image.config);
 				}
 
 				// Update image with canvas
+				// Generate and cache filename for exports
+				const cachedFilename = await generateFilename(
+					image.originalFile || image.file,
+					timestampToRender,
+					image.dateSource
+				);
+
 				setImages((prev) =>
 					prev.map((img) =>
 						img.id === imageId
@@ -284,6 +325,7 @@ export function useBatchProcessing(options: BatchProcessingOptions = {}) {
 									canvas,
 									status: 'completed' as const,
 									timestamp: timestampToRender,
+									cachedFilename,
 								}
 							: img
 					)

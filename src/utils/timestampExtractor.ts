@@ -59,8 +59,9 @@ export async function extractTimestamp(
 				};
 			}
 		}
-	} catch {
+	} catch (error) {
 		// If EXIF parsing fails, continue with fallbacks
+		console.warn('EXIF parsing failed:', error);
 	}
 
 	// Step 2: Try filename parsing (if enabled)
@@ -82,8 +83,9 @@ export async function extractTimestamp(
 					confidence: 'medium',
 				};
 			}
-		} catch {
+		} catch (error) {
 			// Continue to next fallback
+			console.warn('Filename parsing failed:', error);
 		}
 	}
 

@@ -9,6 +9,21 @@ interface DateInputDialogProps {
 	onSkip: () => void;
 }
 
+function formatDefaultDate(defaultDate?: Date) {
+	if (!defaultDate) return { date: '', time: '' };
+
+	const year = defaultDate.getFullYear();
+	const month = String(defaultDate.getMonth() + 1).padStart(2, '0');
+	const day = String(defaultDate.getDate()).padStart(2, '0');
+	const hours = String(defaultDate.getHours()).padStart(2, '0');
+	const minutes = String(defaultDate.getMinutes()).padStart(2, '0');
+
+	return {
+		date: `${year}-${month}-${day}`,
+		time: `${hours}:${minutes}`,
+	};
+}
+
 export default function DateInputDialog({
 	open,
 	filename,
@@ -19,23 +34,9 @@ export default function DateInputDialog({
 	const { t } = useTranslation();
 	const dialogRef = useRef<HTMLDialogElement>(null);
 
-	const [date, setDate] = useState<string>('');
-	const [time, setTime] = useState<string>('');
-
-	// Initialize form with default date if provided
-	// eslint-disable-next-line react-hooks/set-state-in-effect
-	useEffect(() => {
-		if (defaultDate && open) {
-			const year = defaultDate.getFullYear();
-			const month = String(defaultDate.getMonth() + 1).padStart(2, '0');
-			const day = String(defaultDate.getDate()).padStart(2, '0');
-			const hours = String(defaultDate.getHours()).padStart(2, '0');
-			const minutes = String(defaultDate.getMinutes()).padStart(2, '0');
-
-			setDate(`${year}-${month}-${day}`);
-			setTime(`${hours}:${minutes}`);
-		}
-	}, [defaultDate, open]);
+	// Initialize state from defaultDate (component remounts when file changes via key prop)
+	const [date, setDate] = useState(() => formatDefaultDate(defaultDate).date);
+	const [time, setTime] = useState(() => formatDefaultDate(defaultDate).time);
 
 	// Handle dialog open/close with fallback for test environments
 	useEffect(() => {
@@ -109,7 +110,10 @@ export default function DateInputDialog({
 				</div>
 
 				<div>
-					<label htmlFor="filename" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+					<label
+						htmlFor="filename"
+						className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+					>
 						{t('dateInput.filenameLabel')}
 					</label>
 					<input
@@ -122,7 +126,10 @@ export default function DateInputDialog({
 				</div>
 
 				<div>
-					<label htmlFor="date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+					<label
+						htmlFor="date"
+						className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+					>
 						{t('dateInput.dateLabel')} *
 					</label>
 					<input
@@ -136,7 +143,10 @@ export default function DateInputDialog({
 				</div>
 
 				<div>
-					<label htmlFor="time" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+					<label
+						htmlFor="time"
+						className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+					>
 						{t('dateInput.timeLabel')}
 					</label>
 					<input

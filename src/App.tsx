@@ -7,6 +7,7 @@ import LanguageSwitcher from './components/LanguageSwitcher';
 import DateInputDialog from './components/DateInputDialog';
 import BatchProgressView from './components/BatchProgressView';
 import BatchDownloadControls from './components/BatchDownloadControls';
+import Toast from './components/Toast';
 import useTimestamp from './hooks/useTimestamp';
 import { useBatchProcessing } from './hooks/useBatchProcessing';
 import { formatDate } from './utils/dateFormatter';
@@ -32,6 +33,7 @@ function App() {
 	const [showDateInputDialog, setShowDateInputDialog] = useState(false);
 	const [manualDate, setManualDate] = useState<Date | null>(null);
 	const [converting, setConverting] = useState(false);
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
 	// Batch processing state
 	const {
@@ -74,10 +76,8 @@ function App() {
 		const formattedTimestamp = date ? formatDate(date, config.format) : null;
 		if (formattedTimestamp && images.length > 0) {
 			updateTimestampForAll(formattedTimestamp, source, confidence);
-			// Re-render completed images with updated timestamp
-			setTimeout(() => {
-				rerenderCompletedImages();
-			}, 0);
+			// Re-render completed images with updated timestamp (async, no need to wait)
+			void rerenderCompletedImages();
 		}
 	}, [
 		date,
@@ -121,7 +121,10 @@ function App() {
 			console.error('HEIC conversion failed:', error);
 			// Fallback: treat all files as non-HEIC and continue
 			processed = selectedFiles.map((f) => ({ file: f, originalFile: null }));
-			// TODO: Show error notification to user
+			// Show error notification to user
+			setErrorMessage(
+				'Failed to convert HEIC images. Processing images without conversion.'
+			);
 		} finally {
 			setConverting(false);
 		}
@@ -315,12 +318,21 @@ function App() {
 			</div>
 
 			<DateInputDialog
+				key={fileForExif?.name || 'no-file'}
 				open={showDateInputDialog}
 				filename={fileForExif?.name || 'unknown'}
 				defaultDate={manualDate || extractedDate || undefined}
 				onConfirm={handleDateInputConfirm}
 				onSkip={handleDateInputSkip}
 			/>
+
+			{errorMessage && (
+				<Toast
+					message={errorMessage}
+					type="error"
+					onClose={() => setErrorMessage(null)}
+				/>
+			)}
 		</div>
 	);
 }
