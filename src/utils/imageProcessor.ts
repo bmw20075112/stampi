@@ -33,6 +33,7 @@ export const DEFAULT_FONT_SIZE_SCALE = 1.0;
 export const MIN_FONT_SIZE_SCALE = 0.5;
 export const MAX_FONT_SIZE_SCALE = 2.0;
 const FONT_SIZE_RATIO = 0.04;
+const PADDING_RATIO = 0.015; // Fixed 1.5% of image width for consistent padding
 
 /**
  * Calculates font size based on image width and optional scale factor.
@@ -115,9 +116,40 @@ export function renderTimestamp(
 
 	ctx.drawImage(image, 0, 0);
 
+	// Use the shorter dimension for consistent sizing across portrait/landscape images
+	const minDimension = Math.min(image.naturalWidth, image.naturalHeight);
 	const scale = config.fontSizeScale ?? DEFAULT_FONT_SIZE_SCALE;
-	const fontSize = calculateFontSize(image.naturalWidth, scale);
+	let fontSize = calculateFontSize(minDimension, scale);
+
+	// Use fixed percentage of shorter dimension for consistent padding
+	const padding = Math.round(minDimension * PADDING_RATIO);
+
+	// Set initial font to measure text
 	ctx.font = `${fontSize}px monospace`;
+	let textMetrics = ctx.measureText(timestamp);
+	let textWidth = textMetrics.width;
+
+	// Ensure text fits within image bounds (with padding on both sides)
+	const maxWidth = canvas.width - padding * 2;
+	const maxHeight = canvas.height - padding * 2;
+
+	// Scale down font if text is too wide
+	if (textWidth > maxWidth) {
+		const scaleFactor = maxWidth / textWidth;
+		fontSize = Math.max(MIN_FONT_SIZE, Math.floor(fontSize * scaleFactor));
+		ctx.font = `${fontSize}px monospace`;
+		textMetrics = ctx.measureText(timestamp);
+		textWidth = textMetrics.width;
+	}
+
+	// Scale down font if text is too tall
+	if (fontSize > maxHeight) {
+		fontSize = Math.max(MIN_FONT_SIZE, maxHeight);
+		ctx.font = `${fontSize}px monospace`;
+		textMetrics = ctx.measureText(timestamp);
+		textWidth = textMetrics.width;
+	}
+
 	ctx.fillStyle = config.color;
 
 	// Apply text shadow if configured
@@ -128,11 +160,7 @@ export function renderTimestamp(
 		ctx.shadowOffsetY = config.shadowOffsetY ?? 2;
 	}
 
-	const textMetrics = ctx.measureText(timestamp);
 	const textHeight = fontSize;
-	const textWidth = textMetrics.width;
-
-	const padding = Math.round(fontSize * 0.5);
 	const position = calculatePosition(
 		config.position,
 		{ width: canvas.width, height: canvas.height },
