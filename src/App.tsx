@@ -19,7 +19,7 @@ import { extractTimestamp } from './utils/timestampExtractor';
 const DEFAULT_CONFIG: TimestampConfig = {
 	format: 'YYYY/MM/DD HH:mm:ss',
 	position: 'bottom-right',
-	color: '#FFF',
+	color: '#FFFFFF',
 	fontSize: 30,
 	shadowBlur: 8,
 	shadowOffsetX: 3,

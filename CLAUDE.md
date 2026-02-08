@@ -59,7 +59,7 @@ pnpm lint             # Run ESLint
 
 - `format`: DateFormat type (8 locale variants including 'YYYY/MM/DD', 'DD/MM/YYYY', etc.)
 - `position`: Position type ('bottom-right' | 'bottom-left' | 'top-right' | 'top-left')
-- `color`: hex string (default: '#FFF' white)
+- `color`: hex string (default: '#FFFFFF' white)
 - `fontSize`: number in pixels (default: 30, auto-calculated as ~3% of image width)
 - `shadowBlur`: number (default: 8)
 - `shadowOffsetX`: number (default: 3)
