@@ -1,4 +1,6 @@
 import type { DateSource } from '@/hooks/useTimestamp';
+import type { NamingConfig } from '@/config/namingConfig';
+import { getNamingConfig } from '@/config/namingConfig';
 
 const GENERIC_NAMES = [
 	'blob',
@@ -16,12 +18,15 @@ const GENERIC_NAMES = [
  * 1. Original filename (if not generic)
  * 2. Date-based naming for EXIF/filename sources
  * 3. SHA-256 hash fallback
+ *
+ * @param config - Naming configuration (defaults to production config)
  */
 export async function generateFilename(
 	file: File,
 	timestamp: string | null,
 	dateSource: DateSource,
-	cachedFilename?: string
+	cachedFilename?: string,
+	config: NamingConfig = getNamingConfig()
 ): Promise<string> {
 	// 0. Use cached filename if available
 	if (cachedFilename) {
@@ -31,7 +36,7 @@ export async function generateFilename(
 	// 1. Try original filename (if not generic)
 	const basename = getBasename(file.name);
 	if (basename && !isGenericName(file.name)) {
-		return `${basename}_timestamped`;
+		return `${config.imagePrefix}${config.separator}${basename}${config.imageSuffix}`;
 	}
 
 	// 2-3. Try date-based naming for EXIF or filename sources
@@ -40,11 +45,11 @@ export async function generateFilename(
 		(dateSource.startsWith('exif-') || dateSource === 'filename')
 	) {
 		const sanitizedDate = sanitizeDateString(timestamp);
-		return `IMG_${sanitizedDate}`;
+		return `${config.datePrefix}${config.separator}${sanitizedDate}`;
 	}
 
 	// 4. Fallback to hash
-	return await generateHashFilename(file);
+	return await generateHashFilename(file, config);
 }
 
 /**
@@ -78,7 +83,10 @@ function sanitizeDateString(dateStr: string): string {
 /**
  * Generates a filename based on SHA-256 hash of file content
  */
-async function generateHashFilename(file: File): Promise<string> {
+async function generateHashFilename(
+	file: File,
+	config: NamingConfig
+): Promise<string> {
 	const buffer = await file.arrayBuffer();
 	const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
 	const hashArray = Array.from(new Uint8Array(hashBuffer));
@@ -86,5 +94,5 @@ async function generateHashFilename(file: File): Promise<string> {
 		.map((b) => b.toString(16).padStart(2, '0'))
 		.join('');
 
-	return `IMG_${hashHex.substring(0, 12)}`;
+	return `${config.hashPrefix}${config.separator}${hashHex.substring(0, 12)}`;
 }

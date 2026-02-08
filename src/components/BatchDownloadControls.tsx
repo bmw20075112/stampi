@@ -4,6 +4,7 @@ import type { ProcessedImage } from '@/hooks/useBatchProcessing';
 import { createZip } from '@/utils/zipGenerator';
 import { exportImage } from '@/utils/imageExporter';
 import { generateFilename } from '@/utils/filenameGenerator';
+import { generateZipFilename } from '@/utils/zipNaming';
 import Toast from '@/components/Toast';
 
 interface BatchDownloadControlsProps {
@@ -61,7 +62,7 @@ export default function BatchDownloadControls({
 			const url = URL.createObjectURL(zipBlob);
 			const link = document.createElement('a');
 			link.href = url;
-			link.download = `time-image-batch-${new Date().getTime()}.zip`;
+			link.download = generateZipFilename();
 			link.click();
 			URL.revokeObjectURL(url);
 		} catch (error) {
