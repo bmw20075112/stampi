@@ -41,7 +41,7 @@ function App() {
 		addImages,
 		removeImage,
 		startProcessing,
-		updateTimestampForAll,
+		reformatAllTimestamps,
 		rerenderCompletedImages,
 		updateConfig,
 	} = useBatchProcessing({
@@ -82,24 +82,15 @@ function App() {
 	// Use manual date if provided, otherwise use extracted date
 	const date = manualDate || extractedDate;
 
-	// Apply timestamp to all images when date or format changes
+	// Reformat all timestamps when format changes (preserves each image's individual date)
 	useEffect(() => {
-		if (!date || images.length === 0) return;
+		if (images.length === 0) return;
 
-		const formattedTimestamp = formatDate(date, config.format);
-		updateTimestampForAll(formattedTimestamp, source, confidence);
+		reformatAllTimestamps((date) => formatDate(date, config.format));
 
 		// Schedule re-render (debounced to avoid excessive operations)
 		scheduleRerender();
-	}, [
-		date,
-		config.format,
-		source,
-		confidence,
-		images.length,
-		updateTimestampForAll,
-		scheduleRerender,
-	]);
+	}, [config.format, images.length, reformatAllTimestamps, scheduleRerender]);
 
 	// Sync config changes to all images
 	// Handles all config properties: format, fontSize, color, position, shadow
@@ -160,12 +151,14 @@ function App() {
 				const result = await extractTimestamp(fileForExif);
 				if (result.date) {
 					return {
+						date: result.date,
 						timestamp: formatDate(result.date, config.format),
 						source: result.source,
 						confidence: result.confidence,
 					};
 				}
 				return {
+					date: null,
 					timestamp: null,
 					source: result.source,
 					confidence: result.confidence,
@@ -173,6 +166,7 @@ function App() {
 			} catch (error) {
 				console.error('Failed to extract timestamp:', error);
 				return {
+					date: null,
 					timestamp: null,
 					source: 'none' as const,
 					confidence: 'none' as const,

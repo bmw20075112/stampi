@@ -9,6 +9,7 @@ export interface ProcessedImage {
 	file: File;
 	originalFile: File | null;
 	imageUrl: string;
+	date: Date | null; // Store original Date for reformatting
 	timestamp: string | null;
 	config: TimestampConfig;
 	dateSource: DateSource;
@@ -64,6 +65,7 @@ export function useBatchProcessing(options: BatchProcessingOptions = {}) {
 			files: File[],
 			originalFiles?: (File | null)[],
 			timestamps?: Array<{
+				date: Date | null;
 				timestamp: string | null;
 				source: DateSource;
 				confidence: Confidence;
@@ -76,6 +78,7 @@ export function useBatchProcessing(options: BatchProcessingOptions = {}) {
 				file,
 				originalFile: originalFiles?.[i] ?? null,
 				imageUrl: URL.createObjectURL(file),
+				date: timestamps?.[i]?.date ?? null,
 				timestamp: timestamps?.[i]?.timestamp ?? null,
 				config: { ...defaultConfig },
 				dateSource: timestamps?.[i]?.source ?? 'none',
@@ -142,6 +145,22 @@ export function useBatchProcessing(options: BatchProcessingOptions = {}) {
 					timestamp: timestamp || img.timestamp,
 					dateSource: img.status === 'pending' ? dateSource : img.dateSource,
 					confidence: img.status === 'pending' ? confidence : img.confidence,
+				}))
+			);
+		},
+		[]
+	);
+
+	/**
+	 * Reformats timestamps for all images using their individual dates
+	 * Used when date format changes
+	 */
+	const reformatAllTimestamps = useCallback(
+		(formatFunc: (date: Date) => string) => {
+			setImages((prev) =>
+				prev.map((img) => ({
+					...img,
+					timestamp: img.date ? formatFunc(img.date) : img.timestamp,
 				}))
 			);
 		},
@@ -405,6 +424,7 @@ export function useBatchProcessing(options: BatchProcessingOptions = {}) {
 		updateConfig,
 		updateTimestampForAll,
 		updateImageTimestamp,
+		reformatAllTimestamps,
 		rerenderCompletedImages,
 		startProcessing,
 	};

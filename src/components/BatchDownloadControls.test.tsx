@@ -25,6 +25,7 @@ describe('BatchDownloadControls', () => {
 		file: new File(['content'], 'photo.jpg', { type: 'image/jpeg' }),
 		originalFile: null,
 		imageUrl: 'blob:mock-url',
+		date: new Date('2024-03-15T14:30:45'),
 		timestamp: '2024/03/15 14:30:45',
 		config: {
 			format: 'YYYY/MM/DD',
