@@ -1,3 +1,11 @@
+/**
+ * Valid year range for date validation
+ * MIN_YEAR: Unix epoch start (1970-01-01)
+ * MAX_YEAR: Reasonable upper bound for photo timestamps
+ */
+export const MIN_YEAR = 1970;
+export const MAX_YEAR = 2100;
+
 export interface DateComponents {
 	year: number;
 	month: number;
@@ -13,9 +21,61 @@ interface FilenamePattern {
 	extract: (match: RegExpMatchArray) => DateComponents | null;
 }
 
+/**
+ * Helper to extract date and time components from regex match array
+ * Reduces boilerplate code in pattern extractors
+ *
+ * @param match - RegExpMatchArray from pattern regex
+ * @param indices - Object mapping component names to match indices
+ * @returns DateComponents object with all time components as required numbers
+ */
+function extractDateTimeComponents(
+	match: RegExpMatchArray,
+	indices: {
+		year: number;
+		month: number;
+		day: number;
+		hour: number;
+		minute: number;
+		second: number;
+	}
+): Required<DateComponents> {
+	return {
+		year: parseInt(match[indices.year], 10),
+		month: parseInt(match[indices.month], 10),
+		day: parseInt(match[indices.day], 10),
+		hour: parseInt(match[indices.hour], 10),
+		minute: parseInt(match[indices.minute], 10),
+		second: parseInt(match[indices.second], 10),
+	};
+}
+
+/**
+ * Helper to extract date-only components from regex match array
+ * Reduces boilerplate code in pattern extractors
+ *
+ * @param match - RegExpMatchArray from pattern regex
+ * @param indices - Object mapping component names to match indices
+ * @returns DateComponents object with only date fields
+ */
+function extractDateOnlyComponents(
+	match: RegExpMatchArray,
+	indices: {
+		year: number;
+		month: number;
+		day: number;
+	}
+): Pick<DateComponents, 'year' | 'month' | 'day'> {
+	return {
+		year: parseInt(match[indices.year], 10),
+		month: parseInt(match[indices.month], 10),
+		day: parseInt(match[indices.day], 10),
+	};
+}
+
 export function isValidDate(year: number, month: number, day: number): boolean {
 	// Check year range
-	if (year < 1970 || year > 2100) {
+	if (year < MIN_YEAR || year > MAX_YEAR) {
 		return false;
 	}
 
@@ -58,12 +118,15 @@ const FILENAME_PATTERNS: FilenamePattern[] = [
 		name: 'standard-camera',
 		regex: /(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})/,
 		extract: (match) => {
-			const year = parseInt(match[1], 10);
-			const month = parseInt(match[2], 10);
-			const day = parseInt(match[3], 10);
-			const hour = parseInt(match[4], 10);
-			const minute = parseInt(match[5], 10);
-			const second = parseInt(match[6], 10);
+			const { year, month, day, hour, minute, second } =
+				extractDateTimeComponents(match, {
+					year: 1,
+					month: 2,
+					day: 3,
+					hour: 4,
+					minute: 5,
+					second: 6,
+				});
 
 			if (!isValidDate(year, month, day)) {
 				return null;
@@ -81,12 +144,15 @@ const FILENAME_PATTERNS: FilenamePattern[] = [
 		name: 'screenshot-macos',
 		regex: /(\d{4})-(\d{2})-(\d{2})\s+at\s+(\d{1,2})\.(\d{2})\.(\d{2})/i,
 		extract: (match) => {
-			const year = parseInt(match[1], 10);
-			const month = parseInt(match[2], 10);
-			const day = parseInt(match[3], 10);
-			const hour = parseInt(match[4], 10);
-			const minute = parseInt(match[5], 10);
-			const second = parseInt(match[6], 10);
+			const { year, month, day, hour, minute, second } =
+				extractDateTimeComponents(match, {
+					year: 1,
+					month: 2,
+					day: 3,
+					hour: 4,
+					minute: 5,
+					second: 6,
+				});
 
 			if (!isValidDate(year, month, day)) {
 				return null;
@@ -104,9 +170,11 @@ const FILENAME_PATTERNS: FilenamePattern[] = [
 		name: 'whatsapp',
 		regex: /(\d{4})(\d{2})(\d{2})-WA\d+/i,
 		extract: (match) => {
-			const year = parseInt(match[1], 10);
-			const month = parseInt(match[2], 10);
-			const day = parseInt(match[3], 10);
+			const { year, month, day } = extractDateOnlyComponents(match, {
+				year: 1,
+				month: 2,
+				day: 3,
+			});
 
 			if (!isValidDate(year, month, day)) {
 				return null;
@@ -120,9 +188,11 @@ const FILENAME_PATTERNS: FilenamePattern[] = [
 		name: 'generic-dash',
 		regex: /(\d{4})-(\d{2})-(\d{2})/,
 		extract: (match) => {
-			const year = parseInt(match[1], 10);
-			const month = parseInt(match[2], 10);
-			const day = parseInt(match[3], 10);
+			const { year, month, day } = extractDateOnlyComponents(match, {
+				year: 1,
+				month: 2,
+				day: 3,
+			});
 
 			if (!isValidDate(year, month, day)) {
 				return null;
@@ -136,9 +206,11 @@ const FILENAME_PATTERNS: FilenamePattern[] = [
 		name: 'generic-compact',
 		regex: /(\d{4})(\d{2})(\d{2})(?!\d)/,
 		extract: (match) => {
-			const year = parseInt(match[1], 10);
-			const month = parseInt(match[2], 10);
-			const day = parseInt(match[3], 10);
+			const { year, month, day } = extractDateOnlyComponents(match, {
+				year: 1,
+				month: 2,
+				day: 3,
+			});
 
 			if (!isValidDate(year, month, day)) {
 				return null;

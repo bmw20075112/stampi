@@ -14,16 +14,14 @@ import { formatDate } from '@/utils/dateFormatter';
 import type { TimestampConfig } from '@/utils/imageProcessor';
 import { processFilesForHeic } from '@/utils/heicConverter';
 import { extractTimestamp } from '@/utils/timestampExtractor';
+import { DEFAULT_SHADOW_CONFIG } from '@/config/shadowDefaults';
 
 const DEFAULT_CONFIG: TimestampConfig = {
 	format: 'YYYY/MM/DD HH:mm:ss',
 	position: 'bottom-right',
 	color: '#FFFFFF',
 	fontSizeScale: 1.0,
-	shadowBlur: 8,
-	shadowOffsetX: 3,
-	shadowOffsetY: 3,
-	shadowColor: 'rgba(0, 0, 0, 0.9)',
+	...DEFAULT_SHADOW_CONFIG,
 };
 
 function App() {

@@ -1,6 +1,7 @@
 import type { DateSource } from '@/hooks/useTimestamp';
 import type { NamingConfig } from '@/config/namingConfig';
 import { getNamingConfig } from '@/config/namingConfig';
+import { getBasename } from '@/utils/filenameUtils';
 
 const GENERIC_NAMES = [
 	'blob',
@@ -34,9 +35,11 @@ export async function generateFilename(
 	}
 
 	// 1. Try original filename (if not generic)
-	const basename = getBasename(file.name);
-	if (basename && !isGenericName(file.name)) {
-		return `${config.imagePrefix}${config.separator}${basename}${config.imageSuffix}`;
+	if (!isGenericName(file.name)) {
+		const basename = getBasename(file.name);
+		if (basename) {
+			return `${config.imagePrefix}${config.separator}${basename}${config.imageSuffix}`;
+		}
 	}
 
 	// 2-3. Try date-based naming for EXIF or filename sources
@@ -50,19 +53,6 @@ export async function generateFilename(
 
 	// 4. Fallback to hash
 	return await generateHashFilename(file, config);
-}
-
-/**
- * Extracts basename from filename (removes extension)
- */
-function getBasename(filename: string): string {
-	if (!filename) return '';
-
-	// Find last dot for extension
-	const lastDotIndex = filename.lastIndexOf('.');
-	if (lastDotIndex === -1) return filename;
-
-	return filename.substring(0, lastDotIndex);
 }
 
 /**

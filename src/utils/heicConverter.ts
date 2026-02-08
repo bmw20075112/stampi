@@ -1,3 +1,5 @@
+import { HEIC_QUALITY } from '@/config/exportConfig';
+
 // Lazy-load heic2any (~1.5MB) only when needed
 let heic2anyLoader: (() => Promise<typeof import('heic2any')>) | null = null;
 
@@ -46,12 +48,12 @@ export function isHeicFile(file: File): boolean {
  * Converts a HEIC file to JPEG using heic2any.
  * Returns the converted file and preserves the original for EXIF extraction.
  *
- * Quality: 0.88 is used for HEIC → JPEG conversion to maintain good visual quality
+ * Quality is configured in exportConfig.ts to maintain good visual quality
  * while reducing file size. Final resizing/compression happens during export via
  * compressorjs (see imageExporter.ts).
  *
  * Note: heic2any doesn't support maxWidth parameter. Large files (48MP+) are handled
- * during the export phase where compressorjs applies maxWidth: 2000 to prevent memory
+ * during the export phase where compressorjs applies maxWidth to prevent memory
  * issues while maintaining quality suitable for web/mobile viewing.
  *
  * Lazy loads heic2any (~1.5MB) only when needed, reducing initial bundle size.
@@ -66,7 +68,7 @@ export async function convertHeicToJpeg(
 	const result = await heic2any({
 		blob: file,
 		toType: 'image/jpeg',
-		quality: 0.88,
+		quality: HEIC_QUALITY,
 	});
 
 	const blob = Array.isArray(result) ? result[0] : result;

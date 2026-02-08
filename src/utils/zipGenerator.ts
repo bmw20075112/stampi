@@ -1,4 +1,5 @@
 import { zipSync } from 'fflate';
+import { splitFilename } from '@/utils/filenameUtils';
 
 export interface ZipImage {
 	filename: string;
@@ -85,20 +86,4 @@ function deduplicateFilenames(images: ZipImage[]): ZipImage[] {
 	}
 
 	return result;
-}
-
-/**
- * Splits filename into base name and extension
- */
-function splitFilename(filename: string): { base: string; ext: string } {
-	const lastDotIndex = filename.lastIndexOf('.');
-
-	if (lastDotIndex === -1 || lastDotIndex === 0) {
-		return { base: filename, ext: '' };
-	}
-
-	return {
-		base: filename.substring(0, lastDotIndex),
-		ext: filename.substring(lastDotIndex + 1),
-	};
 }

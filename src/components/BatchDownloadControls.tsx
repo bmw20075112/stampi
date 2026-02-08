@@ -5,7 +5,9 @@ import { createZip } from '@/utils/zipGenerator';
 import { exportImage } from '@/utils/imageExporter';
 import { generateFilename } from '@/utils/filenameGenerator';
 import { generateZipFilename } from '@/utils/zipNaming';
+import { downloadBlob } from '@/utils/downloadUtils';
 import Toast from '@/components/Toast';
+import { EXPORT_QUALITY, MAX_EXPORT_WIDTH } from '@/config/exportConfig';
 
 interface BatchDownloadControlsProps {
 	images: ProcessedImage[];
@@ -32,14 +34,12 @@ export default function BatchDownloadControls({
 
 		try {
 			// Export all canvases to blobs with compression
-			// Quality: 0.85 balances file size and visual quality for final output
-			// maxWidth: 2000 prevents memory issues and creates web/mobile-friendly files
-			// Note: HEIC files are first converted at 0.88 quality, then this applies final compression
+			// See exportConfig.ts for quality and size rationale
 			const zipImages = await Promise.all(
 				completedImages.map(async (image) => {
 					const blob = await exportImage(image.canvas!, {
-						quality: 0.85,
-						maxWidth: 2000,
+						quality: EXPORT_QUALITY,
+						maxWidth: MAX_EXPORT_WIDTH,
 					});
 					const filename = await generateFilename(
 						image.originalFile ?? image.file,
@@ -59,12 +59,7 @@ export default function BatchDownloadControls({
 			const zipBlob = await createZip(zipImages);
 
 			// Trigger download
-			const url = URL.createObjectURL(zipBlob);
-			const link = document.createElement('a');
-			link.href = url;
-			link.download = generateZipFilename();
-			link.click();
-			URL.revokeObjectURL(url);
+			downloadBlob(zipBlob, generateZipFilename());
 		} catch (error) {
 			console.error('Download failed:', error);
 			setErrorMessage('Download failed. Please try again.');
@@ -83,8 +78,8 @@ export default function BatchDownloadControls({
 		try {
 			// Export canvas to blob
 			const blob = await exportImage(image.canvas, {
-				quality: 0.85,
-				maxWidth: 2000,
+				quality: EXPORT_QUALITY,
+				maxWidth: MAX_EXPORT_WIDTH,
 			});
 
 			// Generate filename
@@ -96,12 +91,7 @@ export default function BatchDownloadControls({
 			);
 
 			// Trigger download
-			const url = URL.createObjectURL(blob);
-			const link = document.createElement('a');
-			link.href = url;
-			link.download = `${filename}.jpg`;
-			link.click();
-			URL.revokeObjectURL(url);
+			downloadBlob(blob, `${filename}.jpg`);
 		} catch (error) {
 			console.error('Download failed:', error);
 			setErrorMessage('Download failed. Please try again.');

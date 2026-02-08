@@ -38,13 +38,30 @@ export default function useTimestamp(
 	const [confidence, setConfidence] = useState<Confidence>('none');
 	const [needsUserInput, setNeedsUserInput] = useState(false);
 
+	// Helper to set successful extraction result
+	const setExtractedDate = (
+		extractedDate: Date,
+		extractedSource: DateSource,
+		extractedConfidence: Confidence
+	) => {
+		setDate(extractedDate);
+		setSource(extractedSource);
+		setConfidence(extractedConfidence);
+		setLoading(false);
+	};
+
+	// Helper to reset to initial state
+	const resetTimestampState = (requiresUserInput = false) => {
+		setDate(null);
+		setSource('none');
+		setConfidence('none');
+		setNeedsUserInput(requiresUserInput);
+		setLoading(false);
+	};
+
 	useEffect(() => {
 		if (!file) {
-			setDate(null);
-			setSource('none');
-			setLoading(false);
-			setConfidence('none');
-			setNeedsUserInput(false);
+			resetTimestampState(false);
 			return;
 		}
 
@@ -58,26 +75,21 @@ export default function useTimestamp(
 
 				if (exifData) {
 					if (exifData.DateTimeOriginal) {
-						setDate(exifData.DateTimeOriginal);
-						setSource('exif-datetime-original');
-						setConfidence('high');
-						setLoading(false);
+						setExtractedDate(
+							exifData.DateTimeOriginal,
+							'exif-datetime-original',
+							'high'
+						);
 						return;
 					}
 
 					if (exifData.CreateDate) {
-						setDate(exifData.CreateDate);
-						setSource('exif-create-date');
-						setConfidence('high');
-						setLoading(false);
+						setExtractedDate(exifData.CreateDate, 'exif-create-date', 'high');
 						return;
 					}
 
 					if (exifData.ModifyDate) {
-						setDate(exifData.ModifyDate);
-						setSource('exif-modify-date');
-						setConfidence('medium');
-						setLoading(false);
+						setExtractedDate(exifData.ModifyDate, 'exif-modify-date', 'medium');
 						return;
 					}
 				}
@@ -94,10 +106,7 @@ export default function useTimestamp(
 							dateComponents.minute ?? 0,
 							dateComponents.second ?? 0
 						);
-						setDate(parsedDate);
-						setSource('filename');
-						setConfidence('medium');
-						setLoading(false);
+						setExtractedDate(parsedDate, 'filename', 'medium');
 						return;
 					}
 				}
@@ -105,19 +114,12 @@ export default function useTimestamp(
 				// Step 3: Try file.lastModified (if enabled)
 				if (enableFileModified) {
 					const lastModifiedDate = new Date(file.lastModified);
-					setDate(lastModifiedDate);
-					setSource('file-modified');
-					setConfidence('low');
-					setLoading(false);
+					setExtractedDate(lastModifiedDate, 'file-modified', 'low');
 					return;
 				}
 
 				// Step 4: All methods failed, need user input
-				setDate(null);
-				setSource('none');
-				setConfidence('none');
-				setNeedsUserInput(true);
-				setLoading(false);
+				resetTimestampState(true);
 			} catch {
 				// If EXIF parsing fails, continue with fallbacks
 				try {
@@ -133,10 +135,7 @@ export default function useTimestamp(
 								dateComponents.minute ?? 0,
 								dateComponents.second ?? 0
 							);
-							setDate(parsedDate);
-							setSource('filename');
-							setConfidence('medium');
-							setLoading(false);
+							setExtractedDate(parsedDate, 'filename', 'medium');
 							return;
 						}
 					}
@@ -144,19 +143,12 @@ export default function useTimestamp(
 					// Step 3: Try file.lastModified (if enabled)
 					if (enableFileModified) {
 						const lastModifiedDate = new Date(file.lastModified);
-						setDate(lastModifiedDate);
-						setSource('file-modified');
-						setConfidence('low');
-						setLoading(false);
+						setExtractedDate(lastModifiedDate, 'file-modified', 'low');
 						return;
 					}
 
 					// Step 4: All methods failed
-					setDate(null);
-					setSource('none');
-					setConfidence('none');
-					setNeedsUserInput(true);
-					setLoading(false);
+					resetTimestampState(true);
 				} finally {
 					// Ensure loading is set to false
 					setLoading(false);

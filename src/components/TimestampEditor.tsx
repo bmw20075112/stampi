@@ -6,6 +6,7 @@ import {
 	DEFAULT_FONT_SIZE_SCALE,
 } from '@/utils/imageProcessor';
 import type { DateFormat } from '@/utils/dateFormatter';
+import { DEFAULT_SHADOW_CONFIG } from '@/config/shadowDefaults';
 
 interface TimestampEditorProps {
 	config: TimestampConfig;
@@ -63,10 +64,7 @@ export default function TimestampEditor({
 		if (e.target.checked) {
 			onChange({
 				...config,
-				shadowBlur: 8,
-				shadowOffsetX: 3,
-				shadowOffsetY: 3,
-				shadowColor: 'rgba(0, 0, 0, 0.9)',
+				...DEFAULT_SHADOW_CONFIG,
 			});
 		} else {
 			onChange({
