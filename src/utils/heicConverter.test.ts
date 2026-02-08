@@ -4,19 +4,18 @@ const { mockHeic2any } = vi.hoisted(() => ({
 	mockHeic2any: vi.fn(),
 }));
 
-vi.mock('heic2any', () => ({
-	default: mockHeic2any,
-}));
-
 import {
 	isHeicFile,
 	convertHeicToJpeg,
 	processFilesForHeic,
+	setHeic2anyLoader,
 } from '@/utils/heicConverter';
 
 describe('heicConverter', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		// Mock the heic2any loader to avoid loading the actual library
+		setHeic2anyLoader(async () => ({ default: mockHeic2any }));
 	});
 
 	describe('isHeicFile', () => {
