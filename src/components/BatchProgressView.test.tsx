@@ -18,7 +18,7 @@ describe('BatchProgressView', () => {
 			format: 'YYYY/MM/DD',
 			position: 'bottom-right',
 			color: '#FF6B35',
-			fontSize: 48,
+			fontSizeScale: 1.0,
 		},
 		dateSource: 'exif-datetime-original',
 		confidence: 'high',

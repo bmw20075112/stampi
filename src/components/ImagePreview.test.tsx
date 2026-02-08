@@ -7,7 +7,7 @@ const defaultConfig: TimestampConfig = {
 	format: 'YYYY/MM/DD HH:mm:ss',
 	position: 'bottom-right',
 	color: '#FF6B35',
-	fontSize: 30,
+	fontSizeScale: 1.0,
 };
 
 describe('ImagePreview', () => {

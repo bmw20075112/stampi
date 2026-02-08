@@ -44,7 +44,7 @@ export function useBatchProcessing(options: BatchProcessingOptions = {}) {
 			format: 'YYYY/MM/DD',
 			position: 'bottom-right',
 			color: '#FF6B35',
-			fontSize: 48,
+			fontSizeScale: 1.0,
 		}),
 		[]
 	);
@@ -195,6 +195,7 @@ export function useBatchProcessing(options: BatchProcessingOptions = {}) {
 
 	/**
 	 * Re-render completed images with updated timestamp
+	 * Uses chunked processing to avoid memory spikes with large batches
 	 */
 	const rerenderCompletedImages = useCallback(async () => {
 		// Get completed images that need re-rendering
@@ -204,42 +205,53 @@ export function useBatchProcessing(options: BatchProcessingOptions = {}) {
 
 		if (completedImages.length === 0) return;
 
-		// Load all images and render canvases in parallel
-		const updates = await Promise.all(
-			completedImages.map(
-				(img) =>
-					new Promise<{ id: string; canvas: HTMLCanvasElement } | null>(
-						(resolve) => {
-							const imageElement = new Image();
-							imageElement.src = img.imageUrl;
-							imageElement.onload = () => {
-								const newCanvas = document.createElement('canvas');
-								newCanvas.width = imageElement.naturalWidth;
-								newCanvas.height = imageElement.naturalHeight;
-								const ctx = newCanvas.getContext('2d');
-								if (ctx) {
-									ctx.drawImage(imageElement, 0, 0);
-									renderTimestamp(
-										newCanvas,
-										imageElement,
-										img.timestamp ?? '',
-										img.config
-									);
-									resolve({ id: img.id, canvas: newCanvas });
-								} else {
-									resolve(null);
-								}
-							};
-							imageElement.onerror = () => resolve(null);
-						}
-					)
-			)
-		);
+		// Process in chunks to avoid memory spikes for large batches
+		const CHUNK_SIZE = 20;
+		const allUpdates: Array<{ id: string; canvas: HTMLCanvasElement } | null> =
+			[];
+
+		for (let i = 0; i < completedImages.length; i += CHUNK_SIZE) {
+			const chunk = completedImages.slice(i, i + CHUNK_SIZE);
+
+			// Process chunk in parallel
+			const chunkUpdates = await Promise.all(
+				chunk.map(
+					(img) =>
+						new Promise<{ id: string; canvas: HTMLCanvasElement } | null>(
+							(resolve) => {
+								const imageElement = new Image();
+								imageElement.src = img.imageUrl;
+								imageElement.onload = () => {
+									const newCanvas = document.createElement('canvas');
+									newCanvas.width = imageElement.naturalWidth;
+									newCanvas.height = imageElement.naturalHeight;
+									const ctx = newCanvas.getContext('2d');
+									if (ctx) {
+										ctx.drawImage(imageElement, 0, 0);
+										renderTimestamp(
+											newCanvas,
+											imageElement,
+											img.timestamp ?? '',
+											img.config
+										);
+										resolve({ id: img.id, canvas: newCanvas });
+									} else {
+										resolve(null);
+									}
+								};
+								imageElement.onerror = () => resolve(null);
+							}
+						)
+				)
+			);
+
+			allUpdates.push(...chunkUpdates);
+		}
 
 		// Batch update all canvases in a single state update
 		setImages((prev) =>
 			prev.map((img) => {
-				const update = updates.find((u) => u?.id === img.id);
+				const update = allUpdates.find((u) => u?.id === img.id);
 				return update ? { ...img, canvas: update.canvas } : img;
 			})
 		);

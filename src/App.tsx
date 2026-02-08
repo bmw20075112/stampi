@@ -11,7 +11,6 @@ import Toast from '@/components/Toast';
 import useTimestamp from '@/hooks/useTimestamp';
 import { useBatchProcessing } from '@/hooks/useBatchProcessing';
 import { formatDate } from '@/utils/dateFormatter';
-import { calculateFontSize } from '@/utils/imageProcessor';
 import type { TimestampConfig } from '@/utils/imageProcessor';
 import { processFilesForHeic } from '@/utils/heicConverter';
 import { extractTimestamp } from '@/utils/timestampExtractor';
@@ -20,7 +19,7 @@ const DEFAULT_CONFIG: TimestampConfig = {
 	format: 'YYYY/MM/DD HH:mm:ss',
 	position: 'bottom-right',
 	color: '#FFFFFF',
-	fontSize: 30,
+	fontSizeScale: 1.0,
 	shadowBlur: 8,
 	shadowOffsetX: 3,
 	shadowOffsetY: 3,
@@ -93,7 +92,7 @@ function App() {
 	}, [config.format, images.length, reformatAllTimestamps, scheduleRerender]);
 
 	// Sync config changes to all images
-	// Handles all config properties: format, fontSize, color, position, shadow
+	// Handles all config properties: format, fontSizeScale, color, position, shadow
 	useEffect(() => {
 		if (images.length === 0) return;
 
@@ -183,21 +182,12 @@ function App() {
 			timestamps
 		);
 
-		// Sync current config to newly added images (except fontSize, calculated below)
+		// Sync current config to newly added images
 		updateConfig(config);
 
 		// Reset manual date and dialog when new images uploaded
 		setManualDate(null);
 		setShowDateInputDialog(false);
-
-		// Calculate default font size based on first image
-		const firstFile = processed[0].file;
-		const img = new Image();
-		img.onload = () => {
-			const fontSize = calculateFontSize(img.naturalWidth);
-			setConfig((prev) => ({ ...prev, fontSize }));
-		};
-		img.src = URL.createObjectURL(firstFile);
 	};
 
 	const handleDateInputConfirm = (confirmedDate: Date) => {

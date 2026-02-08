@@ -1,6 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import type { TimestampConfig, Position } from '@/utils/imageProcessor';
-import { MIN_FONT_SIZE, MAX_FONT_SIZE } from '@/utils/imageProcessor';
+import {
+	MIN_FONT_SIZE_SCALE,
+	MAX_FONT_SIZE_SCALE,
+	DEFAULT_FONT_SIZE_SCALE,
+} from '@/utils/imageProcessor';
 import type { DateFormat } from '@/utils/dateFormatter';
 
 interface TimestampEditorProps {
@@ -45,8 +49,10 @@ export default function TimestampEditor({
 		onChange({ ...config, position: e.target.value as Position });
 	};
 
-	const handleFontSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		onChange({ ...config, fontSize: parseInt(e.target.value, 10) });
+	const handleFontSizeScaleChange = (
+		e: React.ChangeEvent<HTMLInputElement>
+	) => {
+		onChange({ ...config, fontSizeScale: parseFloat(e.target.value) });
 	};
 
 	const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,23 +128,31 @@ export default function TimestampEditor({
 
 			<div>
 				<label
-					htmlFor="fontSize"
+					htmlFor="fontSizeScale"
 					className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
 				>
 					{t('common.fontSize')}
 				</label>
 				<div className="flex items-center gap-3">
 					<input
-						id="fontSize"
+						id="fontSizeScale"
 						type="range"
-						min={MIN_FONT_SIZE}
-						max={MAX_FONT_SIZE}
-						value={config.fontSize}
-						onChange={handleFontSizeChange}
+						min={MIN_FONT_SIZE_SCALE}
+						max={MAX_FONT_SIZE_SCALE}
+						step="0.1"
+						value={config.fontSizeScale ?? DEFAULT_FONT_SIZE_SCALE}
+						onChange={handleFontSizeScaleChange}
 						className="flex-1 h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-blue-500"
 					/>
-					<span className="text-sm font-mono text-gray-600 dark:text-gray-400 w-14 text-right">
-						{config.fontSize}px
+					<span
+						className={`text-sm font-mono w-14 text-right transition-colors ${
+							(config.fontSizeScale ?? DEFAULT_FONT_SIZE_SCALE) ===
+							DEFAULT_FONT_SIZE_SCALE
+								? 'text-blue-600 dark:text-blue-400 font-semibold'
+								: 'text-gray-600 dark:text-gray-400'
+						}`}
+					>
+						{(config.fontSizeScale ?? DEFAULT_FONT_SIZE_SCALE).toFixed(1)}x
 					</span>
 				</div>
 			</div>

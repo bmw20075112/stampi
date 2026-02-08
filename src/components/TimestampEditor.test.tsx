@@ -7,7 +7,7 @@ const defaultConfig: TimestampConfig = {
 	format: 'YYYY/MM/DD',
 	position: 'bottom-right',
 	color: '#FF6B35',
-	fontSize: 30,
+	fontSizeScale: 1.0,
 };
 
 describe('TimestampEditor', () => {
@@ -92,25 +92,67 @@ describe('TimestampEditor', () => {
 		});
 	});
 
-	describe('font size slider', () => {
-		it('should display current font size value', () => {
+	describe('font size scale slider', () => {
+		it('should display current font size scale value', () => {
 			render(<TimestampEditor config={defaultConfig} onChange={vi.fn()} />);
 
 			const slider = screen.getByLabelText(/font size/i) as HTMLInputElement;
-			expect(slider.value).toBe('30');
+			expect(slider.value).toBe('1');
 		});
 
-		it('should call onChange when font size is changed', () => {
+		it('should display scale value with "x" suffix', () => {
+			render(<TimestampEditor config={defaultConfig} onChange={vi.fn()} />);
+
+			expect(screen.getByText('1.0x')).toBeInTheDocument();
+		});
+
+		it('should call onChange when font size scale is changed', () => {
 			const onChange = vi.fn();
 			render(<TimestampEditor config={defaultConfig} onChange={onChange} />);
 
 			const slider = screen.getByLabelText(/font size/i);
-			fireEvent.change(slider, { target: { value: '50' } });
+			fireEvent.change(slider, { target: { value: '1.5' } });
 
 			expect(onChange).toHaveBeenCalledWith({
 				...defaultConfig,
-				fontSize: 50,
+				fontSizeScale: 1.5,
 			});
+		});
+
+		it('should handle scale values between 0.5x and 2.0x', () => {
+			const onChange = vi.fn();
+			render(<TimestampEditor config={defaultConfig} onChange={onChange} />);
+
+			const slider = screen.getByLabelText(/font size/i);
+
+			fireEvent.change(slider, { target: { value: '0.5' } });
+			expect(onChange).toHaveBeenCalledWith({
+				...defaultConfig,
+				fontSizeScale: 0.5,
+			});
+
+			fireEvent.change(slider, { target: { value: '2.0' } });
+			expect(onChange).toHaveBeenCalledWith({
+				...defaultConfig,
+				fontSizeScale: 2.0,
+			});
+		});
+
+		it('should highlight scale value when at default (1.0x)', () => {
+			render(<TimestampEditor config={defaultConfig} onChange={vi.fn()} />);
+
+			const scaleDisplay = screen.getByText('1.0x');
+			expect(scaleDisplay).toHaveClass('text-blue-600');
+			expect(scaleDisplay).toHaveClass('font-semibold');
+		});
+
+		it('should not highlight scale value when not at default', () => {
+			const customConfig = { ...defaultConfig, fontSizeScale: 1.5 };
+			render(<TimestampEditor config={customConfig} onChange={vi.fn()} />);
+
+			const scaleDisplay = screen.getByText('1.5x');
+			expect(scaleDisplay).toHaveClass('text-gray-600');
+			expect(scaleDisplay).not.toHaveClass('font-semibold');
 		});
 	});
 
